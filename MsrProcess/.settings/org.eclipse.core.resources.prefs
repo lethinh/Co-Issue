@@ -1,0 +1,10 @@
+eclipse.preferences.version=1
+encoding//src/com/capmkts/bulkupload/client/Channel.java=UTF-8
+encoding//src/com/capmkts/bulkupload/client/SSIService.java=UTF-8
+encoding//src/com/capmkts/bulkupload/client/SSIServiceLocator.java=UTF-8
+encoding//src/com/capmkts/bulkupload/client/SSIServiceSoap.java=UTF-8
+encoding//src/com/capmkts/bulkupload/client/SSIServiceSoapStub.java=UTF-8
+encoding//src/com/capmkts/encompassservice/Client/EncompassService.java=UTF-8
+encoding//src/com/capmkts/encompassservice/Client/EncompassServiceLocator.java=UTF-8
+encoding//src/com/capmkts/encompassservice/Client/EncompassServiceSoap.java=UTF-8
+encoding//src/com/capmkts/encompassservice/Client/EncompassServiceSoapStub.java=UTF-8
