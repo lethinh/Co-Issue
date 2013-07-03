@@ -29,7 +29,7 @@ public class CommitmentLetterPDFTest {
 			cmcMsrCommitmentLetter.setPatronCompany(patronCompany);
 			
 			AgencyCommitmentLetter agencyCommitmentLetter = new AgencyCommitmentLetter();
-			agencyCommitmentLetter.setAgencyCommitmentID(new Integer(1111));
+			agencyCommitmentLetter.setAgencyCommitmentID("1111");
 			agencyCommitmentLetter.setCommitmentDate(new Date(1, 1, 1999));
 			agencyCommitmentLetter.setExpirationDate(new Date(1, 1, 2000));
 			agencyCommitmentLetter.setDataDeliveryDate(new Date(1, 1, 2001));

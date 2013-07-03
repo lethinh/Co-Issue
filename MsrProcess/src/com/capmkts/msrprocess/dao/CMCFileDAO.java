@@ -14,7 +14,7 @@ import com.capmkts.msrprocess.util.HibernateUtil;
 public class CMCFileDAO {
 
 	public void saveFile(File file, String uploadType, Boolean valid,
-			String inValidMessage, Integer cmcCommitmentNumber,Integer agencyCommitmentNumber) {
+			String inValidMessage, Integer cmcCommitmentNumber,String agencyCommitmentNumber) {
 
 		CMCFile cmcFile = new CMCFile();
 		cmcFile.setFileData(getBytes(file));
@@ -47,7 +47,7 @@ public class CMCFileDAO {
 	 * @param agencyCommitmentNumber
 	 */
 	public void saveFile(byte[] pdfFile, String fileName, String uploadType, Boolean valid,
-			String inValidMessage, Integer cmcCommitmentNumber,Integer agencyCommitmentNumber) {
+			String inValidMessage, Integer cmcCommitmentNumber,String agencyCommitmentNumber) {
 
 		CMCFile cmcFile = new CMCFile();
 		cmcFile.setFileData(pdfFile);

@@ -1,15 +1,10 @@
 package com.capmkts.msrprocess.dao;
 
-import java.math.BigDecimal;
-import java.util.HashMap;
 import java.util.List;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
 
-import com.capmkts.msrprocess.constants.MsrConstants;
-import com.capmkts.msrprocess.data.CommitmentData;
 import com.capmkts.msrprocess.util.HibernateUtil;
 
 public class AgencyCommitmentLetterDAO {
@@ -148,5 +143,23 @@ public class AgencyCommitmentLetterDAO {
 		
 		return commitmentDate;
 
+	}
+	
+	public boolean updateLenderName(String lenderName, Integer lenderNum){
+		boolean success = false;
+		Session session = HibernateUtil.getSession();
+		
+		String insertLenderName = 
+				"UPDATE AgencyCommitmentLetter " +
+						"SET lenderName = ('" +lenderName+ "')" +
+						"WHERE lenderNum = '" +lenderNum + "'";
+						
+		System.out.println("\n\nSQL: " +insertLenderName+ "\n\n");
+		int rowsAffected = session.createQuery( insertLenderName ).executeUpdate();
+		if (rowsAffected > 0){
+			success = true;
+		}
+		session.close();
+		return success;
 	}
 }

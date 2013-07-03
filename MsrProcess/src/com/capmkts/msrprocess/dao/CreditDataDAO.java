@@ -10,7 +10,6 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 import com.capmkts.msrprocess.data.CMCFile;
-import com.capmkts.msrprocess.data.CommitmentLetter;
 import com.capmkts.msrprocess.data.CreditData;
 import com.capmkts.msrprocess.util.FileUtil;
 import com.capmkts.msrprocess.util.HibernateUtil;
@@ -35,7 +34,7 @@ public class CreditDataDAO {
 	 * @param agencyCommitmentId
 	 */
 	public void saveFile(File csvFile, String uploadType, boolean valid,
-			String inValidMessage, String loanNumber, int agencyCommitmentId) {
+			String inValidMessage, String loanNumber, String agencyCommitmentId) {
 
 		Session session = HibernateUtil.getSession();
 		Transaction txn = null;
@@ -49,7 +48,7 @@ public class CreditDataDAO {
 				cmcFileExists.setLoanNumber(loanNumber);
 			}
 
-			cmcFileExists.setAgencyCommitmentNumber(new Integer(agencyCommitmentId));
+			cmcFileExists.setAgencyCommitmentNumber(agencyCommitmentId);
 
 			// Make sure that there is no record exists with same loan number
 			// and
@@ -75,7 +74,7 @@ public class CreditDataDAO {
 				cmcFile.setLoanNumber(loanNumber);
 			}
 
-			cmcFile.setAgencyCommitmentNumber(new Integer(agencyCommitmentId));
+			cmcFile.setAgencyCommitmentNumber(agencyCommitmentId);
 
 
 			cmcFile.setFileData(FileUtil.getBytes(csvFile));
@@ -153,7 +152,7 @@ public class CreditDataDAO {
 	}
 
 	public boolean checkCMCFileByLoanNumberAgencyCommitmentId(
-			String loanNumber, int agencyCommitmentId) {
+			String loanNumber, String agencyCommitmentId) {
 
 		boolean isExists = false;
 
@@ -256,7 +255,7 @@ public class CreditDataDAO {
 			List<Object> list = query.list();
 
 			if (!list.isEmpty()) {
-				GUID = (String)list.get(0).toString();
+				GUID = list.get(0).toString();
 			}
 
 		} catch (Exception ex) {
@@ -297,7 +296,7 @@ public class CreditDataDAO {
 			List<Object> list = query.list();
 
 			if (!list.isEmpty()) {
-				purchased = (String)list.get(0).toString();
+				purchased = list.get(0).toString();
 			}
 
 		} catch (Exception ex) {

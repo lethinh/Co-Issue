@@ -33,6 +33,7 @@
 		<mapping class="com.capmkts.msrprocess.data.CommitmentDataSummary" />	
 		<mapping class="com.capmkts.msrprocess.data.AgencyCommitDetails" />
 		<mapping class="com.capmkts.msrprocess.data.ServRateSheets" />
+		<mapping class="com.capmkts.msrprocess.data.RefPatronCo" />
 		
 
 		

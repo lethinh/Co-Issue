@@ -230,7 +230,7 @@ public class EmailUtil {
 		    	message.getToRecipients().add(emailList[i]);
 	        }
 		    message.setSubject("CMC Commitment Letter");
-		    message.setBody(MessageBody.getMessageBodyFromText("Email attachements"));
+		    message.setBody(MessageBody.getMessageBodyFromText("Email attachment"));
 		    message.getAttachments().addFileAttachment(fileName);
 		    message.send();
 	    	isEmailSent = true;

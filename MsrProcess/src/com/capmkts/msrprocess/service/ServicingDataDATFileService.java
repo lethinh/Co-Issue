@@ -2,12 +2,7 @@ package com.capmkts.msrprocess.service;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -19,17 +14,13 @@ import com.capmkts.msrprocess.constants.MsrConstants;
 import com.capmkts.msrprocess.dao.AgencyPurchAdvicesDAO;
 import com.capmkts.msrprocess.dao.AgencyPurchAdvicesManualCheckDAO;
 import com.capmkts.msrprocess.dao.CreditDataDAO;
-import com.capmkts.msrprocess.dao.CreditDataManualCheckDAO;
 import com.capmkts.msrprocess.dao.PricingDAO;
-import com.capmkts.msrprocess.data.AgencyPurchAdvicesManualCheck;
-import com.capmkts.msrprocess.data.CreditData;
-import com.capmkts.msrprocess.data.CreditDataManualCheck;
 import com.capmkts.msrprocess.data.AgencyPurchAdvices;
+import com.capmkts.msrprocess.data.AgencyPurchAdvicesManualCheck;
+import com.capmkts.msrprocess.util.EmailUtil;
 import com.capmkts.msrprocess.util.FileUtil;
-import com.capmkts.msrprocess.validator.ServicingCSVFileFieldValidator;
-import com.capmkts.msrprocess.validator.ServicingDATFileFieldValidator;
-import com.capmkts.msrprocess.validator.ServiceValidateUtility;
 import com.capmkts.msrprocess.validator.DataValidator;
+import com.capmkts.msrprocess.validator.ServiceValidateUtility;
 
 /**
  * ServicingDataDATFileService - This class process DAT File and validate fields
@@ -40,6 +31,7 @@ import com.capmkts.msrprocess.validator.DataValidator;
  */
 public class ServicingDataDATFileService implements FileService {
 
+	@Override
 	public void process(File file, DataValidator dataValidator)
 			throws Exception {
 
@@ -242,9 +234,21 @@ public class ServicingDataDATFileService implements FileService {
 			}
 			agencyPurchAdvicesDAO.saveFile(file, MsrConstants.SERVICING_DATA,
 					dataValidator.isValid(), dataValidationList, null, 0);
-
+			
+			if (dataValidator.getMessageList() != null) {
+				dataValidationList = dataValidator.getMessageList().toString();
+				EmailUtil emailUtil = new EmailUtil();
+				emailUtil.sendErrorEmail("Co-Issue Notification", "Purchase Advice file(s) has been uploaded but failed validation." +
+				"\n"+ dataValidator.getMessageList().toString());
+			}
 			if (dataValidator.getMessageList().isEmpty()){
 				dataValidator.addMessage("Agency Purchase Advise has been accepted.");
+				EmailUtil emailUtil = new EmailUtil();
+				emailUtil.sendEWSEmail("Co-Issue Notification", "Purchase Advice file(s) has been successfully uploaded.");
+			}
+			if (dataValidator.getMessageList().size() > 5){
+				dataValidator.setMessageList(null);
+				dataValidator.addMessage("Errors found in file. Please refer to CMC log file.");
 			}
 			
 			

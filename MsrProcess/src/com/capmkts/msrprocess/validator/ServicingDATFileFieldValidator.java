@@ -1,14 +1,12 @@
 package com.capmkts.msrprocess.validator;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 import com.capmkts.msrprocess.dao.CommitmentLetterDAO;
 import com.capmkts.msrprocess.dao.CreditDataDAO;
 import com.capmkts.msrprocess.data.AgencyCommitmentLetter;
-import com.capmkts.msrprocess.data.CommitmentLetter;
-import com.capmkts.msrprocess.data.CreditData;
 import com.capmkts.msrprocess.data.AgencyPurchAdvices;
+import com.capmkts.msrprocess.data.CreditData;
 
 /**
  * ServicingDATFileFieldValidator - It contains methods which are useful to validate DAT records. 
@@ -49,7 +47,7 @@ public class ServicingDATFileFieldValidator {
 			dataValidator.addMessage("\nPurchase Advice File: Record Number: " + record + "  MTG_ID_NO is null or empty" );
 			isDatFileRecordValid = false;
 		}
-		if(datFileBean.getCONTRACT_NO() == 0){
+		if(datFileBean.getCONTRACT_NO().length() < 1 || datFileBean.getCONTRACT_NO() == null){
 			dataValidator.addMessage("\nPurchase Advice File: Record Number: " + record + "  CONTRACT_NO is null or empty" );
 			isDatFileRecordValid = false;
 		}
@@ -123,7 +121,7 @@ public class ServicingDATFileFieldValidator {
 						dataValidator.addMessage("\nPurchase Advice File: Record Number: " + record + "  Purchase Advice SELLER_NUMBER is not equal to AgencyCommitmentLetter Lender Number.");
 						isValid = false;
 					}
-					if(datFileBean.getCONTRACT_NO() != agencyCommitmentLetter.getAgencyCommitmentID().intValue()){
+					if(datFileBean.getCONTRACT_NO() != agencyCommitmentLetter.getAgencyCommitmentID()){
 						dataValidator.addMessage("\nPurchase Advice File: Record Number: " + record + "  Purchase Advice CONTRACT_NO is not equal to AgencyCommitmentLetter AgencyCommitmentId.");
 						isValid = false;
 					}

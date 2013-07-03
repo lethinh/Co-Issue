@@ -1,18 +1,13 @@
 package com.capmkts.msrprocess.test;
 
-import java.io.IOException;
 import java.net.URI;
-
-import com.sun.jndi.toolkit.url.Uri;
 
 import microsoft.exchange.webservices.data.EmailMessage;
 import microsoft.exchange.webservices.data.ExchangeCredentials;
 import microsoft.exchange.webservices.data.ExchangeService;
 import microsoft.exchange.webservices.data.ExchangeVersion;
-import microsoft.exchange.webservices.data.Folder;
 import microsoft.exchange.webservices.data.MessageBody;
 import microsoft.exchange.webservices.data.WebCredentials;
-import microsoft.exchange.webservices.data.WellKnownFolderName;
 
 
 
@@ -44,7 +39,7 @@ public class MailEWSTest {
 	        	EmailMessage message = new EmailMessage(service);
 	        	message.getToRecipients().add("thinh.n.le@gmail.com");
 	        	message.setSubject("attachements");
-	        	message.setBody(MessageBody.getMessageBodyFromText("Email attachements"));
+	        	message.setBody(MessageBody.getMessageBodyFromText("Email attachments"));
 	        	message.getAttachments().addFileAttachment("C:\\1023_cun.pdf");
 	        	message.send();
 

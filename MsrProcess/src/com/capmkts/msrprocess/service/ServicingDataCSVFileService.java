@@ -44,7 +44,7 @@ public class ServicingDataCSVFileService implements FileService {
 	// These two fields are required to insert into CMCFile table for each file.
 	// Assumption is that first record (all records) in the upload file has these values.
 	private String LOANNUMBER = null;
-	private int AGENCYCOMMITMENTID = 0;
+	private String AGENCYCOMMITMENTID = "";
 
 	@Override
 	public void process(File file, DataValidator dataValidator)
@@ -83,10 +83,10 @@ public class ServicingDataCSVFileService implements FileService {
 			String[] mandateFieldArray = { "ORIGINATORID", "COMMITMENTID",
 					"AGENCYCOMMITMENTID", "LOANNUMBER", "BORROWERFIRSTNAME",
 					"BORROWERLASTNAME", "BORROWERSSN",
-					"BORROWERCREDITSCORE","BORROWERCELLPHONENUMBER",
+					"BORROWERCREDITSCORE",
 					"ORIGINALMORTGAGEAMOUNT",
 					"ANNUALINTERESTRATE", "LOANPROGRAMID", "PROPERTYTYPE",
-					"LOANPURPOSE", "LTV", "CLTV", "DTI", "OCCUPYCODE",
+					"LOANPURPOSE", "LTV", "CLTV", "DTI", 
 					"LOANTERM", "PIPAYMENT", "ESCROWMONTHLYPAYMENT",
 					"TOTALPAYMENT", "CURRENTPRINCIPALBALANCE", "FIRSTDUEDATE",
 					"CURRENTDUEDATE", "MATURITYDATE", "PREPAYPENALTYFLAG",
@@ -103,6 +103,8 @@ public class ServicingDataCSVFileService implements FileService {
 					"LateChargeCode", "LateChargeFactor", "MERSMINNUMBER",
 					"MERSREGISTRATIONDATE" };
 					
+					//"OCCUPYCODE",
+					//"BORROWERCELLPHONENUMBER",
 					//"BORROWERMIDDLEINITIAL", 
 					//"BORROWEREMAILADDRESS", 
 					//"COUNTYCODE"
@@ -187,7 +189,7 @@ public class ServicingDataCSVFileService implements FileService {
 										|| valueArray[j].trim().length() == 0) {
 
 									String validationMessage = "\nRecord: "
-											+ i
+											+ i +"LoanNumber: "+ this.LOANNUMBER
 											+ " HeaderName is: "
 											+ headerArray[j]
 											+ " This field is Mandate. Value is either Null or Empty";
@@ -410,7 +412,8 @@ public class ServicingDataCSVFileService implements FileService {
 			if (dataValidator.getMessageList() != null) {
 				dataValidationList = dataValidator.getMessageList().toString();
 				EmailUtil emailUtil = new EmailUtil();
-				emailUtil.sendErrorEmail("Co-Issue Notification", "A servicing file has been uploaded but failed validation.");
+				emailUtil.sendErrorEmail("Co-Issue Notification", "A servicing file has been uploaded but failed validation." +
+				"\n"+ dataValidator.getMessageList().toString());
 			}
 
 			creditDataDAO.saveFile(file, MsrConstants.SERVICING_DATA,
@@ -438,7 +441,7 @@ public class ServicingDataCSVFileService implements FileService {
 
 	};
 	
-	private String[] checkMailingAddress(String[] recordArray) {
+private static String[] checkMailingAddress(String[] recordArray) {
 		
 		System.out.println("**** Checking Mailing Address ****");
 		String[] dataArray;
@@ -446,37 +449,51 @@ public class ServicingDataCSVFileService implements FileService {
 		
 		String propStreetAddress="", propCity="", propState="", propZip = "";
 		
+		//Copy header
 		arrayBuilder[0] = recordArray[0];
+		//Remove leading null value
+		if (arrayBuilder[1] == null){
+			arrayBuilder[1] = "";
+		}
+
 		for (int i = 1; i < recordArray.length; i++) {
 			dataArray = recordArray[i].split("\\,");
-			switch (i){
-				case 81:
-					propStreetAddress = dataArray[i];
-					break;
-				case 82:
-					propCity = dataArray[i];
-					break;
-				case 83:
-					propState = dataArray[i];
-					break;
-				case 84:
-					propZip = dataArray[i];
-					break;
-				case 86:
-					if (dataArray[86].isEmpty()){
-						dataArray[86] = propStreetAddress;
-						dataArray[87] = propCity;
-						dataArray[88] = propState;
-						dataArray[89] = propZip;
-					}
-					break;		
+			
+			for (int j=0; j<dataArray.length; j++){
+				switch (j){
+					case 81:
+						propStreetAddress = dataArray[j];
+						System.out.println("Prop Street: " + propStreetAddress);
+						break;
+					case 82:
+						propCity = dataArray[j];
+						break;
+					case 83:
+						propState = dataArray[j];
+						break;
+					case 84:
+						propZip = dataArray[j];
+						break;
+					case 86:
+						if (dataArray[86].isEmpty()){
+							dataArray[86] = propStreetAddress;
+							dataArray[87] = propCity;
+							dataArray[88] = propState;
+							dataArray[89] = propZip;
+						}
+						break;		
+				}
+				
+				arrayBuilder[i] += dataArray[j]+",";
+				System.out.println(arrayBuilder[i]);
 			}
-			arrayBuilder[i] = dataArray[i];
+			arrayBuilder[i] += "\n";
 		}
 		
 		System.out.println("**** Checking Mailing Address Complete! ****");
 		return arrayBuilder;
 	}
+
 
 	public static ByteArrayInputStream reteriveByteArrayInputStream(File file) throws Exception{
 

@@ -1,10 +1,9 @@
 package com.capmkts.msrprocess.service;
 
-import java.io.ByteArrayInputStream;
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -35,6 +34,7 @@ import com.capmkts.msrprocess.validator.DataValidator;
 
 public class CommitmentDataXLSFileService implements FileService {
 
+	@Override
 	public void process(File file, DataValidator dataValidator)
 			throws Exception {
 
@@ -56,7 +56,7 @@ public class CommitmentDataXLSFileService implements FileService {
 
 				Integer cmcCommitmentNumber = 0;
 				// get unique Agency Commitment Numbers
-				List<Integer> agencyUniqueCommitNumners = getAgencyCommitmentNumbers(commitmentDataAL);
+				List<String> agencyUniqueCommitNumners = getAgencyCommitmentNumbers(commitmentDataAL);
 
 				// Generate CMC commitment# for Agency Commitment Number , i.e.
 				// one CMC Commitment # to Many Agency CommitmentID
@@ -298,6 +298,18 @@ public class CommitmentDataXLSFileService implements FileService {
 			return null;
 		}
 	}
+	
+	private BigDecimal getBigDecimalValue(Cell cell){
+		BigDecimal bd = null;
+		try {
+			bd = new BigDecimal(cell.getNumericCellValue());
+		}catch(Exception e){
+			System.out.println(e);
+			bd = new BigDecimal("0");
+		}
+		return bd;
+		
+	}
 
 	private Double getCellDoubleValue(Cell cell) {
 		Double tmpDbl = null;
@@ -387,11 +399,11 @@ public class CommitmentDataXLSFileService implements FileService {
 				commitmentData.setLoanNumber(loanNumberTmp);
 
 			} else if (cellCount == 3) {// cell 3 = AgencyCommitmentID - Numeric
-				if (getCellIntegerValue(cell) == null) {
+				if (getBigDecimalValue(cell) == null) {
 					dataValidator.addMessage("\nLoan at row " + loanRow
 							+ ": Missing or Invalid Agency Commitment ID");
 				}
-				commitmentData.setAgencyCommitmentID(getCellIntegerValue(cell));
+				commitmentData.setAgencyCommitmentID(getBigDecimalValue(cell).toPlainString());
 
 			} else if (cellCount == 4) {// cell 4 = Product - String
 				if (cell.getStringCellValue() == null) {
@@ -507,10 +519,10 @@ public class CommitmentDataXLSFileService implements FileService {
 		}
 	}
 
-	private List<Integer> getAgencyCommitmentNumbers(
+	private List<String> getAgencyCommitmentNumbers(
 			List<CommitmentData> commitmentDataAL) {
 
-		List<Integer> agencyCommitmentNumbersAL = new ArrayList<Integer>();
+		List<String> agencyCommitmentNumbersAL = new ArrayList<String>();
 
 		System.out.println("\nUNIQUE agencyCommitmentNumbersAL : "
 				+ agencyCommitmentNumbersAL);
@@ -519,7 +531,7 @@ public class CommitmentDataXLSFileService implements FileService {
 
 			CommitmentData commitmentData = commitmentDataAL.get(i);
 
-			Integer agencyCommitID = commitmentData.getAgencyCommitmentID();
+			String agencyCommitID = commitmentData.getAgencyCommitmentID();
 			if (commitmentData.getValid()
 					&& !agencyCommitmentNumbersAL.contains(agencyCommitID)) {
 				agencyCommitmentNumbersAL.add(agencyCommitID);

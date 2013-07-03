@@ -145,7 +145,7 @@ public class FHLMCCommitmentLetter implements Serializable {
 	private String interestPrincipalRemittanceType;
 
 	@Column(name = "[Investor Contract Identifier]")
-	private int investorContractIdentifier;
+	private String investorContractIdentifier;
 
 	@Column(name = "[LLPA Buyup Max (A Minus)]")
 	private String LLPABuyupMaxAMinus;
@@ -555,11 +555,11 @@ public class FHLMCCommitmentLetter implements Serializable {
 		this.interestPrincipalRemittanceType = interestPrincipalRemittanceType;
 	}
 
-	public int getInvestorContractIdentifier() {
+	public String getInvestorContractIdentifier() {
 		return investorContractIdentifier;
 	}
 
-	public void setInvestorContractIdentifier(int investorContractIdentifier) {
+	public void setInvestorContractIdentifier(String investorContractIdentifier) {
 		this.investorContractIdentifier = investorContractIdentifier;
 	}
 

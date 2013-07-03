@@ -1,8 +1,5 @@
 package com.capmkts.msrprocess.bean;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.NumberFormat;
@@ -13,15 +10,11 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.UUID;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.RequestScoped;
 import javax.faces.bean.ViewScoped;
-import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
-import javax.faces.event.ActionEvent;
 
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
@@ -33,7 +26,6 @@ import com.capmkts.msrprocess.dao.CMCAgencyCommitNumberDAO;
 import com.capmkts.msrprocess.dao.CMCFileDAO;
 import com.capmkts.msrprocess.dao.CommitmentDataDAO;
 import com.capmkts.msrprocess.dao.ExtensionRequestDAO;
-import com.capmkts.msrprocess.dao.FileDownloadBeanDAO;
 import com.capmkts.msrprocess.util.DateUtil;
 
 @ManagedBean(name = "extension")
@@ -122,8 +114,8 @@ public class Extension implements Serializable {
 			Date expirationDateObj = null;
 			formatter = new SimpleDateFormat("yyyy-MM-dd");
 			try {
-				commitDateObj = (Date) formatter.parse(commitDate);
-				expirationDateObj = (Date) formatter.parse(expirationDate);
+				commitDateObj = formatter.parse(commitDate);
+				expirationDateObj = formatter.parse(expirationDate);
 			} catch (ParseException e) {
 				e.printStackTrace();
 			}
@@ -145,10 +137,12 @@ public class Extension implements Serializable {
 				checkExpiration = "<1";
 			}
 			// Handle null values
-			if (origCommitmentAmt.equals("null"))
+			if (origCommitmentAmt.equals("null")) {
 				origCommitmentAmt = "0.00";
-			if (balance.equals("null"))
+			}
+			if (balance.equals("null")) {
 				balance = "0.00";
+			}
 
 			// Check to see if servicing files received
 			commitmentRequestStatusList = cmcFileDAO
@@ -247,13 +241,13 @@ public class Extension implements Serializable {
 				portfolioModel = new PortfolioDataModel(portfolios);
 
 				FacesMessage msg = new FacesMessage(
-						"Request Extended for 10 Days! for Portfolio CommitmentNumber: ",
+						"Request Extended for 10 Days for Portfolio CommitmentNumber: ",
 						portfolio.getCMCCommitmentNumber());
 				FacesContext.getCurrentInstance().addMessage(null, msg);
 			} else {
 				FacesMessage msg = new FacesMessage(
 						"Request has already been Extended. It cannot be extended further. "+
-						"Please contact us at tradesupport@cmcfunding.com. CMC Commitment #: ",
+						MsrConstants.AdditionalExtReqBlurb+ "CMC Commitment #: ",
 						portfolio.getCMCCommitmentNumber());
 				FacesContext.getCurrentInstance().addMessage(null, msg);
 			}

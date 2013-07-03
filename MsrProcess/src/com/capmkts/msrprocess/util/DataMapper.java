@@ -4,11 +4,8 @@ package com.capmkts.msrprocess.util;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -142,10 +139,10 @@ public class DataMapper {
 				mainHeader += ",";
 			}
 		}
-		System.out.println("TEST: " + mainHeader);
+//		System.out.println("TEST: " + mainHeader);
 		
 		int l = itemsArray.length;
-		System.out.println("lenght is" + l);
+//		System.out.println("lenght is" + l);
 		LinkedHashMap myhashmap = new LinkedHashMap();
 
 		for (int i = 0; i < itemsArray.length; i++) {
@@ -169,7 +166,7 @@ public class DataMapper {
 					String column = products.get(headerArray[i]);
 					for (int j = 0; j < itemsArray.length; j++) {
 						if (headerArray[i].equalsIgnoreCase(itemsArray[j])) {
-							System.out.println(headerArray[i] + " : "+ itemsArray[j]);
+//							System.out.println(headerArray[i] + " : "+ itemsArray[j]);
 							myhashmap.put(headerArray[i], column);
 						}
 					}
@@ -188,7 +185,7 @@ public class DataMapper {
 						if (my.equalsIgnoreCase("y")){
 							my = "TRUE";
 						}
-						  System.out.println(my);
+//						  System.out.println(my);
 				         buff = buff +my+",";
 				} 
 				buff += "\n";

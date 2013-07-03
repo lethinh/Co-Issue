@@ -8,7 +8,6 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 
 import com.capmkts.msrprocess.data.AgencyCommitmentLetter;
-import com.capmkts.msrprocess.data.CommitmentLetter;
 import com.capmkts.msrprocess.util.DateUtil;
 import com.capmkts.msrprocess.util.HibernateUtil;
 
@@ -20,7 +19,7 @@ public class CommitmentLetterDAO {
 	}
 
 	// Check for existing of a commitment number for agency commitment number
-	public Boolean isCommitmentLetterExists(Integer agencyCommitmentID) {
+	public Boolean isCommitmentLetterExists(String agencyCommitmentID) {
 
 		Boolean commitmentLetterExists = false;
 
@@ -148,14 +147,14 @@ public class CommitmentLetterDAO {
 	}
 	
 	
-	public AgencyCommitmentLetter getAgencyCommitmentLetter(int agnecyCommimentNumber) {
+	public AgencyCommitmentLetter getAgencyCommitmentLetter(String agencyCommimentNumber) {
 
 		AgencyCommitmentLetter agencyCommitmentLetter = null;
 
 		Session session = HibernateUtil.getSession();
 
 		try {
-			Query query = session.createQuery(" from AgencyCommitmentLetter where agencyCommitmentID = "+agnecyCommimentNumber);
+			Query query = session.createQuery(" from AgencyCommitmentLetter where agencyCommitmentID = "+agencyCommimentNumber);
 
 			List<Object> list = query.list();
 			//int count = Integer.parseInt(list.get(0).toString());
@@ -174,7 +173,7 @@ public class CommitmentLetterDAO {
 		return agencyCommitmentLetter;
 	}
 
-	public int getLoanCount(int agencyCommitmentNumber) {
+	public int getLoanCount(String agencyCommitmentNumber) {
 
 		int loanCount = 0;
 

@@ -84,6 +84,49 @@ public String getPatronCompanyByLenderNum(Integer lenderNum){
 		return patronName;
 	}
 
+public String getPatronCompanyByLenderNumAndOriginatorID(Integer lenderNum, Integer originatorID){
+	
+	String patronName = "";
+	
+	Session session = HibernateUtil.getSession();
+	
+	try{
+		Query query = session.createQuery("select patronCoName from PatronCompany where lenderNum = '" +lenderNum+ "'" +
+				"and originatorID = '" +originatorID+ "'");
+		
+		List list = query.list();
+		patronName = list.get(0).toString();
+		
+	}catch(Exception ex){
+		ex.printStackTrace();
+	}finally{
+		session.close();
+	}
+
+	return patronName;
+}
+
+public String getPatronCompanyByOriginatorID(Integer originatorID){
+	
+	String patronName = "";
+	
+	Session session = HibernateUtil.getSession();
+	
+	try{
+		Query query = session.createQuery("select patronCoName from PatronCompany where originatorID = '" +originatorID+ "'");
+		
+		List list = query.list();
+		patronName = list.get(0).toString();
+		
+	}catch(Exception ex){
+		ex.printStackTrace();
+	}finally{
+		session.close();
+	}
+
+	return patronName;
+}
+
 	public PatronCompany getPatronCompany(String patronCompanyName){
 		
 		PatronCompany patronCompany = null;
@@ -95,6 +138,7 @@ public String getPatronCompanyByLenderNum(Integer lenderNum){
 			List patronCompanyAL = session.createQuery("from PatronCompany where patronCoName = '"+patronCompanyName+"'").list();
 
 			if(patronCompanyAL != null){
+				
 				patronCompany = (PatronCompany)patronCompanyAL.get(0);
 			}
 			

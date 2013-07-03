@@ -2,7 +2,6 @@ package com.capmkts.msrprocess.data;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -54,7 +53,7 @@ public class AgencyPurchAdvices implements Serializable {
 	public int PARTICIPATION = 0;
 	
 	@Column(name = "CONTRACT_NO")
-	public int CONTRACT_NO = 0;
+	public String CONTRACT_NO = "";
 	
 	@Column(name = "CONTRACT_TYPE")
 	public String CONTRACT_TYPE = null;
@@ -281,10 +280,10 @@ public class AgencyPurchAdvices implements Serializable {
 	public void setPARTICIPATION(int pARTICIPATION) {
 		PARTICIPATION = pARTICIPATION;
 	}
-	public int getCONTRACT_NO() {
+	public String getCONTRACT_NO() {
 		return CONTRACT_NO;
 	}
-	public void setCONTRACT_NO(int cONTRACT_NO) {
+	public void setCONTRACT_NO(String cONTRACT_NO) {
 		CONTRACT_NO = cONTRACT_NO;
 	}
 	public String getCONTRACT_TYPE() {

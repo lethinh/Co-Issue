@@ -23,7 +23,7 @@ public class CMCMsrCommitmentLetterDAO {
 		
 		// Seller information
 		PatronCompanyDAO patronCompanyDAO = new PatronCompanyDAO();
-		
+	
 		System.out.println(" agencyCommitmentLetter.getLenderName() "+agencyCommitmentLetter.getLenderName());
 		
 		PatronCompany patronCompany = patronCompanyDAO.getPatronCompany(agencyCommitmentLetter.getLenderName());

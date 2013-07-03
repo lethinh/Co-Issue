@@ -64,13 +64,13 @@ public interface MsrConstants {
 //	public static final String sqlServerPass = "Passw0rd";
 	
 	//BulkUpload service locator
-//	public static final String SSISERVICESOAP_ADDRESS 	= "https://www.cmcfunding.com/BulkImport/Services/SSIService.asmx";
+	public static final String SSISERVICESOAP_ADDRESS 	= "https://www.cmcfunding.com/BulkImport/Services/SSIService.asmx";
 	//BulkUpload service locator TEST
-	public static final String SSISERVICESOAP_ADDRESS 	= "http://localhost/BulkImport/Services/SSIService.asmx";
+//	public static final String SSISERVICESOAP_ADDRESS 	= "http://localhost/BulkImport/Services/SSIService.asmx";
 		
 	//BulkUpload Scheduler -- Directory		
-	public static final String CSV_DIRECTORY			= "C:\\EncompassUpload\\";
-//	public static final String CSV_DIRECTORY			= "\\\\srv-file-01.capmkts.local\\ServicingAcquisition\\ServicingAcquisition\\FNMACoIssue\\EncompassUpload\\";
+//	public static final String CSV_DIRECTORY			= "C:\\EncompassUpload\\";
+	public static final String CSV_DIRECTORY			= "\\\\srv-file-01.capmkts.local\\ServicingAcquisition\\ServicingAcquisition\\FNMACoIssue\\EncompassUpload\\";
 	public static final String CSV_LOG_DIRECTORY		= "\\\\srv-file-01.capmkts.local\\ServicingAcquisition\\ServicingAcquisition\\FNMACoIssue\\EncompassUploadLog\\";
 	public static final int  CAV_BULKUPLOAD_INTERVAL     		= 1;	//in minutes
 	
@@ -82,6 +82,7 @@ public interface MsrConstants {
 	public static final String LOCALBINFOLDER = "C:\\apache-tomcat-7.0.34\\bin";
 	
 	//Additional Extension Request Contact Info
+	public static final String AdditionalExtReqBlurb = "To Request an additional extension, please contact tradesupport@cmcfunding.com or please call our trade manager at 904-543-0052. ";
 	public static final String AdditionalExtReqContact = "tradesupport@cmcfunding.com";
 	
 	//Dynamic Field Importer (DFI)  file

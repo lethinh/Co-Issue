@@ -1,12 +1,10 @@
 package com.capmkts.msrprocess.test;
 
-import java.io.File;
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
-
-import com.capmkts.msrprocess.util.DataMapper;
 
 public class RaviTest {
 	
@@ -33,17 +31,21 @@ public class RaviTest {
 //		List list = query.list();
 //		int count = Integer.parseInt(list.get(0).toString());
 //		System.out.println("COUNT: " + count);
-		File file = new File("C:\\683.csv");
-		String fileContent = DataMapper.mapfile(file);
-		System.out.println("fileContent: " + fileContent);
-
-		String[] recordArray = fileContent.split("\\n");
 		
-		//Check Mailing Address & Property Address modifications (Req'd #F11 of Phase IV)
-		recordArray = checkMailingAddress(recordArray);
-		for(int i=0; i<recordArray.length; i++){
-			System.out.println(recordArray[i]);
+		BigDecimal bd = null;
+		String x = null;
+		Double test = 3.4543542E7;
+		try{
+			bd = new BigDecimal(test);
+		}catch(Exception e){
+			System.out.println(e);
+			bd = new BigDecimal("0");
 		}
+		x = bd.toPlainString();
+		System.out.println(test);
+		System.out.println(bd);
+		System.out.println(x);
+		
 	}	
 	
 private static String[] checkMailingAddress(String[] recordArray) {
@@ -54,34 +56,49 @@ private static String[] checkMailingAddress(String[] recordArray) {
 		
 		String propStreetAddress="", propCity="", propState="", propZip = "";
 		
+		//Copy header
 		arrayBuilder[0] = recordArray[0];
+		//Remove leading null value
+		if (arrayBuilder[1] == null){
+			arrayBuilder[1] = "";
+		}
+
 		for (int i = 1; i < recordArray.length; i++) {
 			dataArray = recordArray[i].split("\\,");
-			switch (i){
-				case 81:
-					propStreetAddress = dataArray[i];
-					break;
-				case 82:
-					propCity = dataArray[i];
-					break;
-				case 83:
-					propState = dataArray[i];
-					break;
-				case 84:
-					propZip = dataArray[i];
-					break;
-				case 86:
-					if (dataArray[86].isEmpty()){
-						dataArray[86] = propStreetAddress;
-						dataArray[87] = propCity;
-						dataArray[88] = propState;
-						dataArray[89] = propZip;
-					}
-					break;		
+			
+			for (int j=0; j<dataArray.length; j++){
+				switch (j){
+					case 81:
+						propStreetAddress = dataArray[j];
+						System.out.println("Prop Street: " + propStreetAddress);
+						break;
+					case 82:
+						propCity = dataArray[j];
+						break;
+					case 83:
+						propState = dataArray[j];
+						break;
+					case 84:
+						propZip = dataArray[j];
+						break;
+					case 86:
+						if (dataArray[86].isEmpty()){
+							dataArray[86] = propStreetAddress;
+							dataArray[87] = propCity;
+							dataArray[88] = propState;
+							dataArray[89] = propZip;
+						}
+						break;		
+				}
+				
+				arrayBuilder[i] += dataArray[j]+",";
+				System.out.println(arrayBuilder[i]);
 			}
-			arrayBuilder[i] = dataArray[i];
+			arrayBuilder[i] += "\n";
 		}
 		
+		String[]  temp = arrayBuilder[1].split("\\,");
+		System.out.println("F86:  " + temp[89]);
 		System.out.println("**** Checking Mailing Address Complete! ****");
 		return arrayBuilder;
 	}

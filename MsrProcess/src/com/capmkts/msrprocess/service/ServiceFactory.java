@@ -94,7 +94,7 @@ public class ServiceFactory {
 			if (fileName.endsWith(".pdf") || fileName.endsWith(".tiff")) { 
 				String sellerLoanNumber = "";
 				String tempLoanNumber = "";
-				int agencyCommitmentID;
+				String agencyCommitmentID;
 //				if (fileName.contains("_")){
 //					tempLoanNumber = (fileName.split("_")[1]);
 //					sellerLoanNumber = tempLoanNumber.split("\\.")[0];
@@ -119,7 +119,7 @@ public class ServiceFactory {
 				String GUID = creditDataDAO.getGUID(sellerLoanNumber);
 				
 				if (tempAgencyCommitmentID != null){
-					agencyCommitmentID = Integer.parseInt(tempAgencyCommitmentID);
+					agencyCommitmentID = tempAgencyCommitmentID;
 				
 	//				System.out.println("\n\nAgency Commitment ID: " + agencyCommitmentID+ "\n\n");
 					CMCFileDAO cmcFileDAO = new CMCFileDAO();

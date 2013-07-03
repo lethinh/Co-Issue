@@ -12,13 +12,12 @@ import com.capmkts.msrprocess.data.AgencyCommitmentLetter;
 import com.capmkts.msrprocess.data.CMCAgencyCommitmentNumber;
 import com.capmkts.msrprocess.data.CMCCommitNumber;
 import com.capmkts.msrprocess.data.CMCMsrCommitmentLetter;
-import com.capmkts.msrprocess.data.PatronCompany;
 import com.capmkts.msrprocess.generator.CMCMSRCommitmentLetterPDF;
 import com.capmkts.msrprocess.util.HibernateUtil;
 
 public class CMCCommitmentNumberDAO {
 	
-	public Integer generateCMCCommitmentNumber(List<Integer> agencyCommitmentNumbersAL){
+	public Integer generateCMCCommitmentNumber(List<String> agencyCommitmentNumbersAL){
 		
 		Integer cmcCommitmentNumber = 0;
 		

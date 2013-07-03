@@ -1,7 +1,6 @@
 package com.capmkts.msrprocess.test;
 
 import java.io.File;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -41,7 +40,7 @@ public class FNMACommitLetterTest {
 				
 				//Fannie Mae's Commitment ID
 				else if (valueArray[j].contains("Fannie Mae's Commitment ID")){
-					agencyCommitmentLetter.setAgencyCommitmentID(Integer.parseInt(valueArray[j+1].replaceAll("\"", "")));
+					agencyCommitmentLetter.setAgencyCommitmentID(valueArray[j+1].replaceAll("\"", ""));
 //					System.out.println(agencyCommitmentLetter.getAgencyCommitmentID());
 				}
 				

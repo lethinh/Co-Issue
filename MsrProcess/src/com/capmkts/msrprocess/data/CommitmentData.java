@@ -26,7 +26,7 @@ public class CommitmentData implements Serializable {
 	private String loanNumber;
 
 	@Column(name = "AgencyCommitmentID")
-	private Integer agencyCommitmentID;
+	private String agencyCommitmentID;
 
 	@Column(name = "Product")
 	private String product;
@@ -106,11 +106,11 @@ public class CommitmentData implements Serializable {
 		this.loanNumber = loanNumber;
 	}
 
-	public Integer getAgencyCommitmentID() {
+	public String getAgencyCommitmentID() {
 		return agencyCommitmentID;
 	}
 
-	public void setAgencyCommitmentID(Integer agencyCommitmentID) {
+	public void setAgencyCommitmentID(String agencyCommitmentID) {
 		this.agencyCommitmentID = agencyCommitmentID;
 	}
 

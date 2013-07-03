@@ -13,6 +13,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import com.capmkts.msrprocess.constants.MsrConstants;
+import com.capmkts.msrprocess.dao.AgencyCommitmentLetterDAO;
 import com.capmkts.msrprocess.dao.CMCFileDAO;
 import com.capmkts.msrprocess.dao.CommitmentLetterDAO;
 import com.capmkts.msrprocess.dao.FHLMCCommitmentLetterDAO;
@@ -42,15 +43,25 @@ public class CommitmentLetterCSVFileService implements FileService {
 			//Commit to database
 			FHLMCCommitmentLetterDAO fhlmcCommitmentLetterDAO = new FHLMCCommitmentLetterDAO();
 			fhlmcCommitmentLetterDAO.save(fhlmcCommitmentLetter);
-			
+
 			//Extract and move data to AgencyCommitmentLetter_Staging
 			boolean success = fhlmcCommitmentLetterDAO.moveToAgencyCommitLetterTbl();
+			
+			//Get Lender Name
+			PatronCompanyDAO patronCompanyDAO = new PatronCompanyDAO();
+			Integer sellerLenderNumber = fhlmcCommitmentLetter.getDesignatedServicerNumber();
+			String lenderName = patronCompanyDAO.getPatronCompanyByLenderNum(sellerLenderNumber);
+			System.out.println("\n***** Seller Lender Number: " +sellerLenderNumber);
+			System.out.println("\n***** Seller Lender Name: " +lenderName);
+			AgencyCommitmentLetterDAO agencyCommitmentLetterDAO = new AgencyCommitmentLetterDAO();
+			
+			agencyCommitmentLetterDAO.updateLenderName(lenderName, sellerLenderNumber);
 			
 			// Save file
 			if (success){
 				CMCFileDAO cmcFileDAO = new CMCFileDAO();
 				cmcFileDAO.saveFile(file, MsrConstants.FHLMC_COMMITMENT_LETTER, true, "FHLMC content", null,
-						Integer.parseInt(fhlmcCommitmentLetter.getMasterCommitmentNumber().replaceAll("[^\\d.]", "")));
+						fhlmcCommitmentLetter.getMasterCommitmentNumber().replaceAll("[^\\d.]", ""));
 				dataValidator.addMessage("Thank you for submitting your commitment");
 			}
 			else{
@@ -216,7 +227,7 @@ public class CommitmentLetterCSVFileService implements FileService {
 				fhlmcCommitmentLetter.setInterestPrincipalRemittanceType(contentArray[i]);
 				break;
 			case 42:
-				fhlmcCommitmentLetter.setInvestorContractIdentifier(parseInteger(contentArray[i]));
+				fhlmcCommitmentLetter.setInvestorContractIdentifier(contentArray[i]);
 				break;
 			case 43:
 				fhlmcCommitmentLetter.setLLPABuyupMaxAMinus(contentArray[i]);
@@ -454,7 +465,7 @@ public class CommitmentLetterCSVFileService implements FileService {
 	        
 	        agencyCommitmentLetter.setLenderNum(getIntegerValue(agencyCommit[0].replaceAll("-", "")));
 	        agencyCommitmentLetter.setLenderName(getStringValue(agencyCommit[1]));
-	        agencyCommitmentLetter.setAgencyCommitmentID(getIntegerValue(agencyCommit[2]));
+	        agencyCommitmentLetter.setAgencyCommitmentID(getStringValue(agencyCommit[2]));
 	        agencyCommitmentLetter.setLenderCommitmentID(getIntegerValue(agencyCommit[3]));
 	        agencyCommitmentLetter.setSource(getStringValue(agencyCommit[4]));
 	        agencyCommitmentLetter.setCommitmentDate(getDateValue(agencyCommit[5]));
@@ -714,10 +725,23 @@ public class CommitmentLetterCSVFileService implements FileService {
 					agencyCommitmentLetter.setLenderName(patronCoDAO.getPatronCompanyByLenderNum(agencyCommitmentLetter.getLenderNum()));
 					System.out.println("\nLender Name: " + agencyCommitmentLetter.getLenderName());
 				}
+//				else if (valueArray[j].contains("Lender Name")){
+////					agencyCommitmentLetter.setLenderName(valueArray[j+1].replaceAll("\"", ""));
+//					//Get lender name from lender #
+//					PatronCompanyDAO patronCoDAO = new PatronCompanyDAO();
+//					if (patronCoDAO.getPatronCompanyByLenderNum(agencyCommitmentLetter.getLenderNum()).isEmpty()){
+//						RefPatronCoDAO refPatronCoDAO = new RefPatronCoDAO();
+//						agencyCommitmentLetter.setLenderName(refPatronCoDAO.getPatronCompanyByLenderNum(agencyCommitmentLetter.getLenderNum()));
+//					}
+//					else{
+//						agencyCommitmentLetter.setLenderName(patronCoDAO.getPatronCompanyByLenderNum(agencyCommitmentLetter.getLenderNum()));
+//					}
+//					System.out.println("\nLender Name: " + agencyCommitmentLetter.getLenderName());
+//				}
 				
 				//Fannie Mae's Commitment ID
 				else if (valueArray[j].contains("Fannie Mae's Commitment ID")){
-					agencyCommitmentLetter.setAgencyCommitmentID(Integer.parseInt(valueArray[j+1].replaceAll("\"", "")));
+					agencyCommitmentLetter.setAgencyCommitmentID(valueArray[j+1].replaceAll("\"", ""));
 					System.out.println(agencyCommitmentLetter.getAgencyCommitmentID());
 				}
 				

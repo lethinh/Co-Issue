@@ -39,7 +39,7 @@ public class CMCFile implements Serializable{
 	private Integer cmcCommitmentNumber;
 
 	@Column(name = "AgencyCommitmentNumber")
-	private Integer agencyCommitmentNumber;
+	private String agencyCommitmentNumber;
 		
 	@Column(name = "LoanNumber")
 	private String loanNumber;
@@ -117,11 +117,11 @@ public class CMCFile implements Serializable{
 		this.cmcCommitmentNumber = cmcCommitmentNumber;
 	}
 
-	public Integer getAgencyCommitmentNumber() {
+	public String getAgencyCommitmentNumber() {
 		return agencyCommitmentNumber;
 	}
 
-	public void setAgencyCommitmentNumber(Integer agencyCommitmentNumber) {
+	public void setAgencyCommitmentNumber(String agencyCommitmentNumber) {
 		this.agencyCommitmentNumber = agencyCommitmentNumber;
 	}
 

@@ -20,7 +20,7 @@ public class CMCAgencyCommitmentNumber implements Serializable{
 	private Integer cmcCommitNumber;
 	
 	@Column(name = "Agency_Commit_Number")
-	private Integer agencyCommitNumber;
+	private String agencyCommitNumber;
 
 	@Column(name = "CMC_Commit_Status")
 	private String cmcCommitStatus;
@@ -41,11 +41,11 @@ public class CMCAgencyCommitmentNumber implements Serializable{
 		this.cmcCommitNumber = cmcCommitNumber;
 	}
 
-	public Integer getAgencyCommitNumber() {
+	public String getAgencyCommitNumber() {
 		return agencyCommitNumber;
 	}
 
-	public void setAgencyCommitNumber(Integer agencyCommitNumber) {
+	public void setAgencyCommitNumber(String agencyCommitNumber) {
 		this.agencyCommitNumber = agencyCommitNumber;
 	}
 

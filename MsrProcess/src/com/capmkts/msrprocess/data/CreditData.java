@@ -34,7 +34,7 @@ public class CreditData implements Serializable {
 	public int COMMITMENTID = 0;
 	
 	@Column(name = "AGENCYCOMMITMENTID")
-	public int AGENCYCOMMITMENTID = 0;
+	public String AGENCYCOMMITMENTID = "";
 	
 	@Column(name = "LOANNUMBER")
 	public String LOANNUMBER = null;
@@ -565,10 +565,10 @@ public class CreditData implements Serializable {
 	public void setCOMMITMENTID(int cOMMITMENTID) {
 		COMMITMENTID = cOMMITMENTID;
 	}
-	public int getAGENCYCOMMITMENTID() {
+	public String getAGENCYCOMMITMENTID() {
 		return AGENCYCOMMITMENTID;
 	}
-	public void setAGENCYCOMMITMENTID(int aGENCYCOMMITMENTID) {
+	public void setAGENCYCOMMITMENTID(String aGENCYCOMMITMENTID) {
 		AGENCYCOMMITMENTID = aGENCYCOMMITMENTID;
 	}
 	public String getLOANNUMBER() {

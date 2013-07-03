@@ -25,7 +25,7 @@ public class AgencyCommitmentLetter implements Serializable {
 	private String lenderName;
 
 	@Column(name = "AgencyCommitmentID")
-	private Integer agencyCommitmentID;
+	private String agencyCommitmentID;
 
 	@Column(name = "LenderCommitmentID")
 	private Integer lenderCommitmentID;
@@ -183,11 +183,11 @@ public class AgencyCommitmentLetter implements Serializable {
 		this.lenderName = lenderName;
 	}
 
-	public Integer getAgencyCommitmentID() {
+	public String getAgencyCommitmentID() {
 		return agencyCommitmentID;
 	}
 
-	public void setAgencyCommitmentID(Integer agencyCommitmentID) {
+	public void setAgencyCommitmentID(String agencyCommitmentID) {
 		this.agencyCommitmentID = agencyCommitmentID;
 	}
 

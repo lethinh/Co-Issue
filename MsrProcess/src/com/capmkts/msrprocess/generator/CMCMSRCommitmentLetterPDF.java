@@ -5,30 +5,24 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import com.capmkts.msrprocess.constants.MsrConstants;
 import com.capmkts.msrprocess.dao.CMCFileDAO;
-import com.capmkts.msrprocess.dao.PricingGridDAO;
 import com.capmkts.msrprocess.data.AgencyCommitmentLetter;
 import com.capmkts.msrprocess.data.CMCMsrCommitmentLetter;
 import com.capmkts.msrprocess.data.PatronCompany;
-import com.capmkts.msrprocess.data.ServRateSheets;
 import com.capmkts.msrprocess.util.DateUtil;
 import com.capmkts.msrprocess.util.EmailUtil;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.AcroFields;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfStamper;
-import com.itextpdf.text.pdf.TextField;
 
 /**
  * CMCMSRCommitmentLetterPDF - This class populate field values in PDF File.
@@ -65,7 +59,7 @@ public class CMCMSRCommitmentLetterPDF {
 			if(cmcMsrCommitmentLetter != null){
 				//Source PDF Tempalte Path
 				String srcPDFPath = "";
-				Integer agencyCommitmentNumber =  null;
+				String agencyCommitmentNumber =  "";
 				
 				reader = new PdfReader(SRC_PDF_PATH);
 		        
