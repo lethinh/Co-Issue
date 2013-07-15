@@ -29,67 +29,86 @@ public class CommitmentLetterCSVFileService implements FileService {
 
 	@Override
 	public void process(File file, DataValidator dataValidator) throws Exception{
+		DataConversionUtil dataConversionUtil = new DataConversionUtil();
+		String fileContent = "";
+		boolean fileValid = false;
 		// Read file to string
-		String fileContent = FileUtils.readFileToString(file);
-//		CreditDataDAO creditDataDAO = new CreditDataDAO();
-
-		//Check for FreddieMac Commitment Letter
-		String[] recordArray = fileContent.split("\\n");
-		String[] headerArray = recordArray[0].split("\\,");
-		
-		if (headerArray[0].contains("Allocable")){
-			FHLMCCommitmentLetter fhlmcCommitmentLetter = prepareFHLMCAgencyCommitmentLetter(recordArray);
-			
-			//Commit to database
-			FHLMCCommitmentLetterDAO fhlmcCommitmentLetterDAO = new FHLMCCommitmentLetterDAO();
-			fhlmcCommitmentLetterDAO.save(fhlmcCommitmentLetter);
-
-			//Extract and move data to AgencyCommitmentLetter_Staging
-			boolean success = fhlmcCommitmentLetterDAO.moveToAgencyCommitLetterTbl();
-			
-			//Get Lender Name
-			PatronCompanyDAO patronCompanyDAO = new PatronCompanyDAO();
-			Integer sellerLenderNumber = fhlmcCommitmentLetter.getDesignatedServicerNumber();
-			String lenderName = patronCompanyDAO.getPatronCompanyByLenderNum(sellerLenderNumber);
-			System.out.println("\n***** Seller Lender Number: " +sellerLenderNumber);
-			System.out.println("\n***** Seller Lender Name: " +lenderName);
-			AgencyCommitmentLetterDAO agencyCommitmentLetterDAO = new AgencyCommitmentLetterDAO();
-			
-			agencyCommitmentLetterDAO.updateLenderName(lenderName, sellerLenderNumber);
-			
-			// Save file
-			if (success){
-				CMCFileDAO cmcFileDAO = new CMCFileDAO();
-				cmcFileDAO.saveFile(file, MsrConstants.FHLMC_COMMITMENT_LETTER, true, "FHLMC content", null,
-						fhlmcCommitmentLetter.getMasterCommitmentNumber().replaceAll("[^\\d.]", ""));
-				dataValidator.addMessage("Thank you for submitting your commitment");
-			}
-			else{
-				dataValidator.addMessage("Invalid data. Please check your file.");
-			}
+		if (file.getName().endsWith("xls") || file.getName().endsWith("xlsx")){
+			fileContent = dataConversionUtil.getExcelToCSVString(file);
+			fileValid = true;
 		}
-		else {
-				
-			AgencyCommitmentLetter agencyCommitmentLetter = readCSVFile(file);
-	
-			CommitmentLetterValidator commitmentLetterValidator = new CommitmentLetterValidator();
-			
-			// Patron per month cap amount validation 
-			if(!commitmentLetterValidator.isPatronCapAmountReached(agencyCommitmentLetter,dataValidator)){
-				
-				CommitmentLetterDAO commitmentLetterDAO = new CommitmentLetterDAO();
-				commitmentLetterDAO.save(agencyCommitmentLetter);
+		else{
+			fileContent = FileUtils.readFileToString(file);
+			fileValid = true;
+		}
 		
-				// Save file
-				CMCFileDAO cmcFileDAO = new CMCFileDAO();
-				cmcFileDAO.saveFile(file, MsrConstants.COMMITMENT_LETTER, dataValidator
-						.isValid(), dataValidator.getMessageList().toString(), null,
-						agencyCommitmentLetter.getAgencyCommitmentID());
+		if (fileValid){
+			//Check for FreddieMac Commitment Letter
+			String[] recordArray = fileContent.split("\\n");
+			String[] headerArray = recordArray[0].split("\\,");
+			
+			//Freddie Mac
+			if (headerArray[0].contains("Allocable")){
+				FHLMCCommitmentLetter fhlmcCommitmentLetter = prepareFHLMCAgencyCommitmentLetter(recordArray);
 				
-				dataValidator.addMessage("Thank you for submitting your commitment");
+				//Commit to database
+				FHLMCCommitmentLetterDAO fhlmcCommitmentLetterDAO = new FHLMCCommitmentLetterDAO();
+				fhlmcCommitmentLetterDAO.save(fhlmcCommitmentLetter);
+	
+				//Extract and move data to AgencyCommitmentLetter_Staging
+				boolean success = fhlmcCommitmentLetterDAO.moveToAgencyCommitLetterTbl();
+				
+				//Get Lender Name
+				PatronCompanyDAO patronCompanyDAO = new PatronCompanyDAO();
+				Integer sellerLenderNumber = fhlmcCommitmentLetter.getDesignatedServicerNumber();
+				String lenderName = patronCompanyDAO.getPatronCompanyByLenderNum(sellerLenderNumber);
+				System.out.println("\n***** Seller Lender Number: " +sellerLenderNumber);
+				System.out.println("\n***** Seller Lender Name: " +lenderName);
+				AgencyCommitmentLetterDAO agencyCommitmentLetterDAO = new AgencyCommitmentLetterDAO();
+				
+				agencyCommitmentLetterDAO.updateLenderName(lenderName, sellerLenderNumber);
+				
+				// Save file
+				if (success){
+					CMCFileDAO cmcFileDAO = new CMCFileDAO();
+					cmcFileDAO.saveFile(file, MsrConstants.FHLMC_COMMITMENT_LETTER, true, "FHLMC content", null,
+							fhlmcCommitmentLetter.getMasterCommitmentNumber().replaceAll("[^\\d.]", ""));
+					dataValidator.addMessage("Thank you for submitting your commitment");
+				}
+				else{
+					dataValidator.addMessage("Invalid data. Please check your file.");
+				}
 			}
-			else{
-				dataValidator.addMessage("Your commitment request has been denied. You have exceeded your 30% portfolio cap.");
+			
+			//Set Loans
+			else if (headerArray[0].contains("Due Date")){
+				dataValidator.addMessage("Please select 'CMC Servicing Date File/Agency PA' then reupload your SET file.");
+			}
+			
+			//Fannie Mae
+			else {
+					
+				AgencyCommitmentLetter agencyCommitmentLetter = readCSVFile(file);
+		
+				CommitmentLetterValidator commitmentLetterValidator = new CommitmentLetterValidator();
+				
+				// Patron per month cap amount validation 
+				if(!commitmentLetterValidator.isPatronCapAmountReached(agencyCommitmentLetter,dataValidator)){
+					
+					CommitmentLetterDAO commitmentLetterDAO = new CommitmentLetterDAO();
+					commitmentLetterDAO.save(agencyCommitmentLetter);
+			
+					// Save file
+					CMCFileDAO cmcFileDAO = new CMCFileDAO();
+					cmcFileDAO.saveFile(file, MsrConstants.COMMITMENT_LETTER, dataValidator
+							.isValid(), dataValidator.getMessageList().toString(), null,
+							agencyCommitmentLetter.getAgencyCommitmentID());
+					
+					dataValidator.addMessage("Thank you for submitting your commitment");
+				}
+				else{
+					dataValidator.addMessage("Your commitment request has been denied. You have exceeded your 30% portfolio cap.");
+				}
 			}
 		}
 	}
@@ -694,7 +713,7 @@ public class CommitmentLetterCSVFileService implements FileService {
 		String fileContent;
 		//Handle xls file
 		String fileName = file.getName();
-		if (fileName.endsWith(".xls")){
+		if (fileName.endsWith(".xls") || fileName.endsWith(".xlsx")){
 			DataConversionUtil dataConversionUtil = new DataConversionUtil();
 			fileContent = dataConversionUtil.getExcelToCSVString(file);
 		}
@@ -741,7 +760,7 @@ public class CommitmentLetterCSVFileService implements FileService {
 				
 				//Fannie Mae's Commitment ID
 				else if (valueArray[j].contains("Fannie Mae's Commitment ID")){
-					agencyCommitmentLetter.setAgencyCommitmentID(valueArray[j+1].replaceAll("\"", ""));
+					agencyCommitmentLetter.setAgencyCommitmentID(valueArray[j+1].replaceAll("\"", "").replaceAll(".0", ""));
 					System.out.println(agencyCommitmentLetter.getAgencyCommitmentID());
 				}
 				
@@ -762,7 +781,7 @@ public class CommitmentLetterCSVFileService implements FileService {
 				
 				//Commitment Date
 				else if (valueArray[j].contains("Commitment Date")){
-					agencyCommitmentLetter.setCommitmentDate(getDateValue(valueArray[j+1].replaceAll("\"", "")));
+					agencyCommitmentLetter.setCommitmentDate(getDateValue(DateUtil.formatXLSXDate(valueArray[j+1].replaceAll("\"", ""))));
 					agencyCommitmentLetter.setDataDeliveryDate(agencyCommitmentLetter.getCommitmentDate());
 					System.out.println(agencyCommitmentLetter.getCommitmentDate());
 				}
@@ -775,7 +794,7 @@ public class CommitmentLetterCSVFileService implements FileService {
 				
 				//Expiration Date
 				else if (valueArray[j].contains("Expiration Date")){
-					agencyCommitmentLetter.setExpirationDate(getDateValue(valueArray[j+1].replaceAll("\"", "")));
+					agencyCommitmentLetter.setExpirationDate(getDateValue(DateUtil.formatXLSXDate(valueArray[j+1].replaceAll("\"", ""))));
 					System.out.println("\nExpiration Date: " +agencyCommitmentLetter.getExpirationDate());
 					agencyCommitmentLetter.setTargetFundDate(getTargetFundDate(agencyCommitmentLetter.getExpirationDate()));
 					System.out.println("\n\nTarget Fund Date: " +agencyCommitmentLetter.getTargetFundDate()+ "\n\n");

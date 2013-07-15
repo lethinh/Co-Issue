@@ -45,8 +45,29 @@ public class RaviTest {
 		System.out.println(test);
 		System.out.println(bd);
 		System.out.println(x);
-		
-	}	
+
+		String _value = "5.3232E6";
+		for (int k=1; k<10; k++){
+			if (_value.startsWith(k+".") && _value.contains("E")){
+    			BigDecimal bdv = new BigDecimal(_value);
+    			_value = bdv.toPlainString();
+    			break;
+    		}
+		}
+		System.out.println(_value);
+	}
+	public static int parseInteger(String value){
+		try {
+			if (!value.isEmpty()){
+				return Integer.parseInt(value);
+			}
+			else{
+				return new Integer(0);
+			}
+		}catch(Exception e){
+			return new Integer(0);
+		}
+	}
 	
 private static String[] checkMailingAddress(String[] recordArray) {
 		

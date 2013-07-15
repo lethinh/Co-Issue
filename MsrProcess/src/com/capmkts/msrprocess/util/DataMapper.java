@@ -11,31 +11,75 @@ import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 
+import com.capmkts.msrprocess.constants.MsrConstants;
+
 public class DataMapper {
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws Exception {
 
 		File filee = new File(
-//				"C:\\Users\\tle\\Dropbox\\Capmkts\\TestingData\\ANM\\ServicingTest.csv");
-//				"C:\\Users\\tle\\Dropbox\\Capmkts\\TestingData\\FNMA Commit Letter Test Data\\Testing\\Testing\\672\\672.csv");
-				"K:\\ServicingAcquisition\\KES\\Testing\\672\\672.csv");
+////				"C:\\Users\\tle\\Dropbox\\Capmkts\\TestingData\\ANM\\ServicingTest.csv");
+////				"C:\\Users\\tle\\Dropbox\\Capmkts\\TestingData\\FNMA Commit Letter Test Data\\Testing\\Testing\\672\\672.csv");
+//				"C:\\746\\CMC Servicing 7112013.xlsx");
+				"C:\\648.xlsx");
 		 String test = mapfile(filee);
-		 
+//		 FileUtil.writeCSV("C:\\tetsingServicing.csv", test, false);
 		 System.out.println(test);
 	}
 
-	public static String mapfile(File file1) throws IOException {
+	public static String mapfile(File file1) throws Exception {
 
 		DataMapper csvmapper = new DataMapper();
-		
+		String fileContent1;
 		// Read file to string
-		String fileContent1 = FileUtils.readFileToString(file1);
-
+		if (file1.getName().endsWith(".xls") || file1.getName().endsWith(".xlsx")){
+			fileContent1 = DataConversionUtil.getExcelToCSVString(file1);
+//			System.out.println(fileContent1);
+//			FileUtil.writeCSV("C:\\tetsingServicing2.csv", fileContent1, false);
+		}
+		else{
+			fileContent1 = FileUtils.readFileToString(file1);
+		}
 		// Split string into records
 		String[] recordArray = fileContent1.split("\\n");
 
 		// Read header
 		String[] headerArray = recordArray[0].split("\\,");
+			
+		//Work around for Hemanth's code until time allows for permanent fix
+		//To uppercase
+		String tempHeader = "";
+		for (int i=0; i<headerArray.length; i++){
+			if (i == headerArray.length - 2){
+				tempHeader += headerArray[i].toUpperCase()+ ",";
+				headerArray[i] = headerArray[i].toUpperCase();
+			}
+			else if (i == headerArray.length - 1){
+				tempHeader += headerArray[i].toUpperCase();
+				headerArray[i] = headerArray[i].toUpperCase();
+			}
+			else{
+				tempHeader += headerArray[i].toUpperCase() + ",";
+				headerArray[i] = headerArray[i].toUpperCase();
+			}
+//			System.out.println("HEADERS: " + headerArray[i]);
+		}
 		
+		
+		
+		String tempStr = "";
+		String[] tempRecordArray = new String[recordArray.length];
+		for (int j=0; j<recordArray.length; j++){
+			if (j==0){
+				tempRecordArray[j] = tempHeader;
+			}
+			else{
+				tempRecordArray[j] = recordArray[j];
+			}
+			tempStr += tempRecordArray[j];
+		}
+		
+		//Write data to temp csv file
+		FileUtil.writeCSV(MsrConstants.LOCALBINFOLDER+"\\temp.csv", tempStr, false);
 		
 //		//Temporarily remove these three headers
 //		for (int n=0; n<headerArray.length; n++){
@@ -132,7 +176,7 @@ public class DataMapper {
 		String mainHeader = "";
 		for (int k=0; k<itemsArray.length; k++){
 			mainHeader += itemsArray[k];
-			if (itemsArray[k].equals("NETBUYPRICE")){
+			if (itemsArray[k].equalsIgnoreCase("NETBUYPRICE")){
 				break;
 			}
 			else {
@@ -158,7 +202,7 @@ public class DataMapper {
 		StringBuilder strBldr = new StringBuilder(300);
 		
 		try {
-			CsvReader products = new CsvReader(file1.getAbsolutePath());
+			CsvReader products = new CsvReader(MsrConstants.LOCALBINFOLDER+"\\temp.csv");
 
 			products.readHeaders();
 			while (products.readRecord()) {

@@ -1,36 +1,21 @@
 package com.capmkts.msrprocess.controller;
 
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.RequestScoped;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
 
-import org.apache.commons.io.FileUtils;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.primefaces.context.RequestContext;
 import org.primefaces.event.FileUploadEvent;
 
-import com.capmkts.msrprocess.data.User;
 import com.capmkts.msrprocess.service.ServiceFactory;
-import com.capmkts.msrprocess.test.CheckDB;
-import com.capmkts.msrprocess.util.HibernateUtil;
 import com.capmkts.msrprocess.validator.DataValidator;
-import javax.faces.context.FacesContext;  
-import javax.faces.event.ActionEvent;  
 
 @ManagedBean(name = "fileUploadController")
 //@ApplicationScoped
@@ -88,10 +73,11 @@ public class FileUploadController {
 			      
 				dataValidator = ServiceFactory.processFiles(this.uploadType, file);
 				//Remove temp file
-				if (file.delete())
+				if (file.delete()) {
 					System.out.println(file.getName() + " is deleted!");
-				else 
+				} else {
 					System.out.println(file.getName() + " is NOT deleted!");
+				}
 					
 				System.out.println("\n\n****dataValidator.isValid()******" + dataValidator.isValid()+ "\n\n");
 				System.out.println("\n\n****dataValidator******" + dataValidator.getMessageList().toString()+ "\n\n");
@@ -130,7 +116,7 @@ public class FileUploadController {
 				msg.setDetail("Missing or Invalid SRP values/column");
 			}
 			else{
-				msg.setDetail("Internal Error. Please contact CMC support.");
+				msg.setDetail("Soft errors occured during processing. Please see CMC error log or please contact CMC support.");
 			}
 			FacesContext.getCurrentInstance().addMessage(null, msg);
 			/*RequestContext context = RequestContext.getCurrentInstance(); 

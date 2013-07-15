@@ -6,11 +6,14 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -18,8 +21,6 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
@@ -28,6 +29,7 @@ import com.capmkts.msrprocess.dao.CMCCommitmentNumberDAO;
 import com.capmkts.msrprocess.dao.CMCFileDAO;
 import com.capmkts.msrprocess.dao.CommitmentDataDAO;
 import com.capmkts.msrprocess.data.CommitmentData;
+import com.capmkts.msrprocess.util.DataConversionUtil;
 import com.capmkts.msrprocess.util.HibernateUtil;
 import com.capmkts.msrprocess.validator.CommitmentDataValidator;
 import com.capmkts.msrprocess.validator.DataValidator;
@@ -218,53 +220,24 @@ public class CommitmentDataXLSFileService implements FileService {
 			}
 			else if (file.getName().endsWith("xlsx"))
 			{
-				XSSFWorkbook workbook = new XSSFWorkbook(myInput); 
-				XSSFSheet sheet = workbook.getSheetAt(0); 
-				Iterator<Row> rowIter = sheet.rowIterator(); 
+				DataConversionUtil dcUtil = new DataConversionUtil();
 				
-				if (rowIter.hasNext()) {
-					rowIter.next();
-
-					int rowCount = 0;
-
-					while (rowIter.hasNext()) {
-
-						rowCount++;
-						System.out.println("\nRow Count: " + rowCount);
-						CommitmentData commitmentData = new CommitmentData();
-						commitmentData.setCreatedDate(new Date());
-						System.out.println("\nCreate Date: "
-								+ commitmentData.getCreatedDate());
-						commitmentData.setValid(true);
-						System.out.println("\nIs Valid: "
-								+ commitmentData.getValid());
-						Row myRow = rowIter.next();
-
-						Iterator<Cell> cellIter = myRow.cellIterator();
-
-						int cellCount = 0;
-
-						while (cellIter.hasNext()) {
-
-							cellCount++;
-							Cell cell = cellIter.next();
-							System.out.println("\nPreparing Commit Data");
-							System.out.println("\nCELL: " + cell);
-							prepareCommitmentData(commitmentData, cellCount,
-									cell, dataValidator, rowCount);
-
-						}
-						if (cellCount != 18) {
-							dataValidator.addMessage("\nLoan at row "
-									+ rowCount
-									+ ": Missing Column. Please check data.");
-						}
-						commitmentDataAL.add(commitmentData);
-						// rowCount++;
-					}
+				CommitmentData commitmentData = new CommitmentData();
+				commitmentData.setCreatedDate(new Date());
+				commitmentData.setValid(true);
+				
+				String fileContent = dcUtil.getExcelToCSVStringCommitRequest(file);
+				
+				String[] recordArray = fileContent.split("\\n");
+				String[] headerArray = recordArray[0].split("\\,");
+				
+				for (int i=1; i<recordArray.length; i++){
+					String[] dataArray = recordArray[i].split("\\,");
+				
+					prepareCommitmentDataXLSX(dataArray, commitmentData,dataValidator, i);
+					commitmentDataAL.add(commitmentData);
 				}
 			}
-
 		} catch (Exception e) {
 			throw e;
 		}
@@ -351,6 +324,145 @@ public class CommitmentDataXLSFileService implements FileService {
 			System.out.println(e);
 		}
 		return tmpDate;
+	}
+	
+	private void prepareCommitmentDataXLSX(String[] dataArray, CommitmentData commitmentData, DataValidator dataValidator, int loanRow){
+		
+		try {	
+				for (int j=0; j<dataArray.length; j++){
+					switch(j){
+						case 0:
+							if (dataArray[j] == null || dataArray[j].isEmpty()){
+								dataValidator.addMessage("\nLoan at row " + loanRow
+										+ ": Missing or Invalid Loan Number");
+							}
+							commitmentData.setOriginatorID(parseInteger(dataArray[j]));
+							break;
+						case 1:
+							if (dataArray[j] == null || dataArray[j].isEmpty()){
+								dataValidator.addMessage("\nLoan at row " + loanRow
+										+ ": Missing or Invalid Loan Number");
+							}
+							commitmentData.setLoanNumber(dataArray[j]);
+							break;
+						case 2:
+							if (dataArray[j] == null || dataArray[j].isEmpty()){
+								dataValidator.addMessage("\nLoan at row " + loanRow
+										+ ": Missing or Invalid Loan Number");
+							}
+							commitmentData.setAgencyCommitmentID(dataArray[j]);
+							break;
+						case 3:
+							if (dataArray[j] == null || dataArray[j].isEmpty()){
+								dataValidator.addMessage("\nLoan at row " + loanRow
+										+ ": Missing or Invalid Loan Number");
+							}
+							commitmentData.setProduct(dataArray[j]);
+							break;
+						case 4:
+							if (dataArray[j] == null || dataArray[j].isEmpty()){
+								dataValidator.addMessage("\nLoan at row " + loanRow
+										+ ": Missing or Invalid Loan Number");
+							}
+							commitmentData.setLoanAmount(parseBigDecimal(dataArray[j]));
+							break;
+						case 5:
+							if (dataArray[j] == null || dataArray[j].isEmpty()){
+								dataValidator.addMessage("\nLoan at row " + loanRow
+										+ ": Missing or Invalid Loan Number");
+							}
+							commitmentData.setNoteRate(parseDouble(dataArray[j]));
+							break;
+						case 6:
+							if (dataArray[j] == null || dataArray[j].isEmpty()){
+								dataValidator.addMessage("\nLoan at row " + loanRow
+										+ ": Missing or Invalid Loan Number");
+							}
+							commitmentData.setPropertyState(dataArray[j]);
+							break;
+						case 7:
+							if (dataArray[j] == null || dataArray[j].isEmpty()){
+								dataValidator.addMessage("\nLoan at row " + loanRow
+										+ ": Missing or Invalid Loan Number");
+							}
+							commitmentData.setLtv(parseDouble(dataArray[j]));
+							break;
+						case 8:
+							if (dataArray[j] == null || dataArray[j].isEmpty()){
+								dataValidator.addMessage("\nLoan at row " + loanRow
+										+ ": Missing or Invalid Loan Number");
+							}
+							commitmentData.setCltv(parseDouble(dataArray[j]));
+							break;
+						case 9:
+							if (dataArray[j] == null || dataArray[j].isEmpty()){
+								dataValidator.addMessage("\nLoan at row " + loanRow
+										+ ": Missing or Invalid Loan Number");
+							}
+							commitmentData.setBorrowerFICO(parseDouble(dataArray[j]));
+							break;
+						case 10:
+							if (dataArray[j] == null || dataArray[j].isEmpty()){
+								dataValidator.addMessage("\nLoan at row " + loanRow
+										+ ": Missing or Invalid Loan Number");
+							}
+							commitmentData.setOccupancyDesc(dataArray[j]);
+							break;
+						case 11:
+							if (dataArray[j] == null || dataArray[j].isEmpty()){
+								dataValidator.addMessage("\nLoan at row " + loanRow
+										+ ": Missing or Invalid Loan Number");
+							}
+							commitmentData.setPropertyTypeDesc(dataArray[j]);
+							break;
+						case 12:
+							if (dataArray[j] == null || dataArray[j].isEmpty()){
+								dataValidator.addMessage("\nLoan at row " + loanRow
+										+ ": Missing or Invalid Loan Number");
+							}
+							commitmentData.setLoanPurposeDesc(dataArray[j]);
+							break;
+						case 13:
+							if (dataArray[j] == null || dataArray[j].isEmpty()){
+								dataValidator.addMessage("\nLoan at row " + loanRow
+										+ ": Missing or Invalid Loan Number");
+							}
+							commitmentData.setDocTypeDesc(dataArray[j]);
+							break;
+						case 14:
+							if (dataArray[j] == null || dataArray[j].isEmpty()){
+								dataValidator.addMessage("\nLoan at row " + loanRow
+										+ ": Missing or Invalid Loan Number");
+							}
+							commitmentData.setWaiveEscrowFlag(parseBoolean(dataArray[j]));
+							break;
+						case 15:
+							if (dataArray[j] == null || dataArray[j].isEmpty()){
+								dataValidator.addMessage("\nLoan at row " + loanRow
+										+ ": Missing or Invalid Loan Number");
+							}
+							commitmentData.setDti(parseDouble(dataArray[j]));
+							break;
+						case 16:
+							if (dataArray[j] == null || dataArray[j].isEmpty()){
+								dataValidator.addMessage("\nLoan at row " + loanRow
+										+ ": Missing or Invalid Loan Number");
+							}
+							commitmentData.setActualCloseDate(parseDate(dataArray[j]));
+							break;
+						case 17:
+							if (dataArray[j] == null || dataArray[j].isEmpty()){
+								dataValidator.addMessage("\nLoan at row " + loanRow
+										+ ": Missing or Invalid Loan Number");
+							}
+							commitmentData.setCmcSRP(parseDouble(dataArray[j]));
+							break;
+					}
+			}	
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void prepareCommitmentData(CommitmentData commitmentData,
@@ -510,10 +622,10 @@ public class CommitmentDataXLSFileService implements FileService {
 				}
 
 			} else if (cellCount == 18) { // cell 18 = CMC_SRP - Numeric
-				if (getCellDoubleValue(cell) == null) {
-					dataValidator.addMessage("\nLoan at row " + loanRow
-							+ ": Missing or Invalid SRP");
-				}
+//				if (getCellDoubleValue(cell) == null) {
+//					dataValidator.addMessage("\nLoan at row " + loanRow
+//							+ ": Missing or Invalid SRP");
+//				}
 				commitmentData.setCmcSRP(getCellDoubleValue(cell));
 			}
 		}
@@ -541,6 +653,76 @@ public class CommitmentDataXLSFileService implements FileService {
 		// System.out.println(" UNIQUE agencyCommitmentNumbersAL :  22 "+agencyCommitmentNumbersAL);
 
 		return agencyCommitmentNumbersAL;
+	}
+	
+	public Double parseDouble(String value){
+		try {
+			if (!value.isEmpty()){
+				return Double.parseDouble(value);
+			}
+			else{
+				return new Double("0.0");
+			}
+		}catch(Exception e){
+			return new Double("0.0");
+		}
+	}
+	
+	public int parseInteger(String value){
+		try {
+			if (!value.isEmpty()){
+				return Integer.parseInt(value);
+			}
+			else{
+				return new Integer(0);
+			}
+		}catch(Exception e){
+			return new Integer(0);
+		}
+	}
+	
+	public BigDecimal parseBigDecimal(String value){
+		BigDecimal newValue;
+		if (value == null || value.isEmpty()){
+			newValue = new BigDecimal("0");
+		}
+		try{
+			newValue = new BigDecimal(value);
+		}catch(Exception e){
+			newValue = new BigDecimal("0");
+		}
+		return newValue;
+	}
+	
+	public boolean parseBoolean(String value){
+		if (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("yes") || value.equalsIgnoreCase("1")){
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
+
+	public Date parseDate(String dateToParse){
+		Date date = null;
+		if (!dateToParse.isEmpty()){
+			if (dateToParse.length() > 11){
+				try {
+					date = new SimpleDateFormat("MM/dd/yyyy HH:mm", Locale.ENGLISH).parse(dateToParse);
+				} catch (ParseException e) {
+					System.out.println("Invalid Date: " +dateToParse);
+				}
+			}
+			else{
+				try {
+					date = new SimpleDateFormat("MM/dd/yyyy", Locale.ENGLISH).parse(dateToParse);
+				} catch (ParseException e) {
+					System.out.println("Invalid Date: " +dateToParse);
+				}
+			}
+		}
+		
+		return date;
 	}
 
 }

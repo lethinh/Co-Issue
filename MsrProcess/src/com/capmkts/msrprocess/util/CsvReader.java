@@ -20,23 +20,23 @@ public class CsvReader {
 	private String fileName = null;
 
 	
-	private UserSettings userSettings = new UserSettings();
+	private final UserSettings userSettings = new UserSettings();
 
 	private Charset charset = null;
 
 	private boolean useCustomRecordDelimiter = false;
 
-	private DataBuffer dataBuffer = new DataBuffer();
+	private final DataBuffer dataBuffer = new DataBuffer();
 
-	private ColumnBuffer columnBuffer = new ColumnBuffer();
+	private final ColumnBuffer columnBuffer = new ColumnBuffer();
 
-	private RawRecordBuffer rawBuffer = new RawRecordBuffer();
+	private final RawRecordBuffer rawBuffer = new RawRecordBuffer();
 
 	private boolean[] isQualified = null;
 
 	private String rawRecord = "";
 
-	private HeadersHolder headersHolder = new HeadersHolder();
+	private final HeadersHolder headersHolder = new HeadersHolder();
 
    private boolean startedColumn = false;
 
@@ -1277,6 +1277,7 @@ public class CsvReader {
 	/**
 	 * 
 	 */
+	@Override
 	protected void finalize() {
 		close(false);
 	}

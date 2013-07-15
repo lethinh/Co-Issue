@@ -8,17 +8,14 @@ import java.math.BigInteger;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.text.DateFormat;
-
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.ConvertUtils;
-import org.apache.commons.beanutils.Converter;
-import org.apache.commons.beanutils.converters.DateConverter;
 import org.apache.commons.beanutils.converters.BigDecimalConverter;
-
+import org.apache.commons.beanutils.converters.DateConverter;
 
 import com.capmkts.msrprocess.constants.MsrConstants;
 import com.capmkts.msrprocess.dao.CommitmentDataDAO;
@@ -26,9 +23,8 @@ import com.capmkts.msrprocess.dao.CommitmentLetterDAO;
 import com.capmkts.msrprocess.dao.CountyCodeDAO;
 import com.capmkts.msrprocess.dao.CreditDataDAO;
 import com.capmkts.msrprocess.dao.RefProgramDAO;
-import com.capmkts.msrprocess.data.CreditData;
-import com.capmkts.msrprocess.data.CreditDataManualCheck;
 import com.capmkts.msrprocess.data.AgencyPurchAdvices;
+import com.capmkts.msrprocess.data.CreditData;
 
 /**
  * ServiceValidateUtility - It contains methods which are useful to validate CSV and DAT file records. 
@@ -38,9 +34,11 @@ import com.capmkts.msrprocess.data.AgencyPurchAdvices;
 public class ServiceValidateUtility {
 
 	public static boolean mandateElementExists(int[] array, int input) {
-		for (int value : array)
-			if (value == input)
+		for (int value : array) {
+			if (value == input) {
 				return true;
+			}
+		}
 		return false;
 	}
 	
@@ -222,16 +220,17 @@ public class ServiceValidateUtility {
 	
 
 	public static boolean mandateFieldExists(String[] array, String input) {
-		for (String value : array)
+		for (String value : array) {
 			if (value.trim().equalsIgnoreCase(input.trim())){
 				return true;
 			}
+		}
 		return false;
 	}
 
 	public static void setCsvFileBeanValue(CreditData csvFileBean,
 			String _fieldName, String _value) {
-
+		
 		Class newClass = csvFileBean.getClass();
 		Method[] methods = newClass.getDeclaredMethods();
 
@@ -244,6 +243,19 @@ public class ServiceValidateUtility {
 				String parameterDataType = dataType[0].getSimpleName();
 
 				if (parameterDataType.equals("String")) {
+					if (_value == null){
+						_value = "";
+					}
+					for (int k=1; k<10; k++){
+						if (_value.startsWith(k+".") && _value.contains("E")){
+	            			BigDecimal bd = new BigDecimal(_value);
+	            			_value = bd.toPlainString();
+	            			break;
+	            		}
+					}
+					if (_value.endsWith(".0")){
+						_value = _value.replaceAll(".0", "");
+					}
 					Object[] parameters = { _value };
 					if (methods[i].getName().equalsIgnoreCase(
 							"set" + _fieldName)) {
@@ -293,6 +305,9 @@ public class ServiceValidateUtility {
 							"set" + _fieldName)) {
 
 						try {
+							if (_value.endsWith(".0")){
+								_value = _value.replaceAll(".0", "");
+							}
 							_valueDecimal = new BigDecimal(_value);
 						} catch (Exception e) {
 							/*System.out
@@ -316,7 +331,6 @@ public class ServiceValidateUtility {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
-
 						break;
 					}
 				} else if (parameterDataType.equals("int")) {
@@ -326,6 +340,9 @@ public class ServiceValidateUtility {
 							"set" + _fieldName)) {
 
 						try {
+							if (_value.endsWith(".0")){
+								_value = _value.replaceAll(".0", "");
+							}
 							_valueInt = Integer.parseInt(_value);
 						} catch (Exception e) {
 							/*System.out

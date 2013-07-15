@@ -101,6 +101,13 @@ public class DateUtil {
 		return formattedDate;
 	}
 	
+	public static String formatXLSXDate (String inDate) throws ParseException{
+		Date date = new Date(inDate);
+		String formattedDate = new SimpleDateFormat("MM/dd/yyyy").format(date);
+		
+		return formattedDate;
+	}
+	
 	public static void main(String[] arg) throws Exception{
 		System.out.println(formatPDFDate("2012-05-20 22:12:00.00.0"));
 	}

@@ -80,6 +80,7 @@ public class BulkUploadServiceClientJob implements Job {
 			
 			List<String> fileNames = getCSVFilenames();
 			int failedUploadCount = 0;
+			int successUploadCount = 0;
 			
 			for (String fileName : fileNames) {
 				System.out.println("FILENAME: " + fileName);
@@ -100,6 +101,7 @@ public class BulkUploadServiceClientJob implements Job {
 						boolean isFileNameChanged = renameFile.renameTo(new File(MsrConstants.CSV_DIRECTORY + "\\" + fileNameOnly));
 						
 						System.out.println("CSV BulkUpload Process Ended!" + isFileNameChanged);
+						successUploadCount++;
 					}
 					else{
 						failedUploadCount++;
@@ -112,7 +114,7 @@ public class BulkUploadServiceClientJob implements Job {
 				emailUtil.sendEWSEmail("Co-Issue Notification", "There are errors in files uploaded to encompass." +
 				"Please see error log in folder K:\\ServicingAcquisition\\FNMACoIssue\\EncompassUploadLog");
 			}
-			else{
+			if (successUploadCount > 0){
 				//Create DFI Upload file
 				FileUtils fileUtils = new FileUtils();
 				File f = new File(MsrConstants.DFIUploadFile);

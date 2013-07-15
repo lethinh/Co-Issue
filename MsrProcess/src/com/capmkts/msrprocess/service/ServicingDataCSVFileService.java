@@ -100,7 +100,7 @@ public class ServicingDataCSVFileService implements FileService {
 					"FLOODREQUIREDFLAG", "FLOODPROGRAM",
 					"FLOODDETERMINATIONDATE", "FLOODCERTNUMBER", "FLOODCMPCO",
 					"FLOODMAPCO", "HIGHPRICELOANINDICATOR",
-					"LateChargeCode", "LateChargeFactor", "MERSMINNUMBER",
+					"LATECHARGECODE", "LATECHARGEFACTOR", "MERSMINNUMBER",
 					"MERSREGISTRATIONDATE" };
 					
 					//"OCCUPYCODE",
@@ -189,7 +189,7 @@ public class ServicingDataCSVFileService implements FileService {
 										|| valueArray[j].trim().length() == 0) {
 
 									String validationMessage = "\nRecord: "
-											+ i +"LoanNumber: "+ this.LOANNUMBER
+											+ i +" LoanNumber: "+ this.LOANNUMBER
 											+ " HeaderName is: "
 											+ headerArray[j]
 											+ " This field is Mandate. Value is either Null or Empty";
@@ -301,6 +301,12 @@ public class ServicingDataCSVFileService implements FileService {
 							// based on CountyCode. Else set value to NULL.
 							ServiceValidateUtility
 									.setPropertyCounty(csvFileRecord);
+							
+							//OriginatorID 'null' value fix
+							String tempOriginatorID = csvFileRecord.getORIGINATORID();
+							csvFileRecord.setORIGINATORID(tempOriginatorID.replaceAll("null", ""));
+							
+							
 							// insert bean into CreditData table.
 							creditDataDAO.save(csvFileRecord);
 							System.out.println("Success**** ");
@@ -332,6 +338,10 @@ public class ServicingDataCSVFileService implements FileService {
 //							}
 
 						} else {
+							//OriginatorID 'null' value fix
+							String tempOriginatorID = csvFileRecord.getORIGINATORID();
+							csvFileRecord.setORIGINATORID(tempOriginatorID.replaceAll("null", ""));
+							
 							// else insert the ServicingFile's data into a
 							// temporary table 'CreditDataManualCheck'
 							// Store the bean to database.

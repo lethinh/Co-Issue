@@ -18,10 +18,10 @@
 						value="#{fileUploadController.uploadType}"
 						valueChangeListener="#{fileUploadController.requestType}" title="Select which type of files you would like to upload">
 						<f:selectItem itemLabel="Select One" itemValue="None" />
-						<f:selectItem itemLabel="Agency Commitment Letter (CSV/XLS)" itemValue="Agency_Commitment_Letter" />
-						<f:selectItem itemLabel="Commitment Request (XLS)" itemValue="Commitment_Request"/>
+						<f:selectItem itemLabel="Agency Commitment Letter (CSV/XLS/XLSX)" itemValue="Agency_Commitment_Letter" />
+						<f:selectItem itemLabel="Commitment Request (XLS/XLSX)" itemValue="Commitment_Request"/>
 						<f:selectItem itemLabel="CMC Servicing Data File/Agency PA (CSV or DAT)" itemValue="CMC_Servicing_Data_File_Agency_PA" />
-						<f:selectItem itemLabel="Loan Document File (PDF)" itemValue="Loan_Document_File" />
+						<f:selectItem itemLabel="Loan Document File (PDF/TIFF)" itemValue="Loan_Document_File" />
 						<p:ajax update="@this" />
 					</h:selectOneMenu>
 					<p:fileUpload fileUploadListener="#{fileUploadController.upload}"

@@ -129,7 +129,7 @@ public class EmailUtil {
 		System.out.println("\nSending Email to Patron.\n");
 		Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
 		FileUtil fileUtil = new FileUtil();
-		String[] emailList = fileUtil.getEmailList("\\\\srv-file-01.capmkts.local\\ServicingAcquisition\\ServicingAcquisition\\FNMACoIssue\\EmailList\\EmailList.txt");
+		String[] emailList = fileUtil.getEmailList(MsrConstants.EmailList);
 		
 		EmailUtil emailUtil = new EmailUtil();
 		isEmailSent = emailUtil.sendSSLMessage(
@@ -153,7 +153,7 @@ public class EmailUtil {
 			FileUtil fileUtil = new FileUtil();
 			String[] emailList = null;
 			try {
-				emailList = fileUtil.getEmailList("\\\\srv-file-01.capmkts.local\\ServicingAcquisition\\ServicingAcquisition\\FNMACoIssue\\EmailList\\DFIEmailList.txt");
+				emailList = fileUtil.getEmailList(MsrConstants.DFIEmailList);
 			} catch (IOException e2) {
 				e2.printStackTrace();
 			}
@@ -162,7 +162,7 @@ public class EmailUtil {
 	        ExchangeCredentials credentials = new WebCredentials(MsrConstants.FROM_EMAIL, MsrConstants.EMAIL_PASS);
 	        service.setCredentials( credentials );    
 	        try {
-				service.setUrl( new URI("https://srv-mail-01.capmkts.local/ews/exchange.asmx") );
+				service.setUrl( new URI(MsrConstants.ExchangeASMX) );
 			} catch (URISyntaxException e1) {
 				e1.printStackTrace();
 			}
@@ -202,7 +202,7 @@ public class EmailUtil {
 		FileUtil fileUtil = new FileUtil();
 		String[] emailList = null;
 		try {
-			emailList = fileUtil.getEmailList("\\\\srv-file-01.capmkts.local\\ServicingAcquisition\\ServicingAcquisition\\FNMACoIssue\\EmailList\\EmailCMCCommitLetterList.txt");
+			emailList = fileUtil.getEmailList(MsrConstants.EmailCMCCommitLetterList);
 		} catch (IOException e2) {
 			e2.printStackTrace();
 		}
@@ -251,7 +251,7 @@ public class EmailUtil {
 		FileUtil fileUtil = new FileUtil();
 		String[] emailList = null;
 		try {
-			emailList = fileUtil.getEmailList("\\\\srv-file-01.capmkts.local\\ServicingAcquisition\\ServicingAcquisition\\FNMACoIssue\\EmailList\\NotificationList.txt");
+			emailList = fileUtil.getEmailList(MsrConstants.NotificationList);
 		} catch (IOException e2) {
 			e2.printStackTrace();
 		}
@@ -260,7 +260,7 @@ public class EmailUtil {
         ExchangeCredentials credentials = new WebCredentials(MsrConstants.FROM_EMAIL, MsrConstants.EMAIL_PASS);
         service.setCredentials( credentials );    
         try {
-			service.setUrl( new URI("https://srv-mail-01.capmkts.local/ews/exchange.asmx") );
+			service.setUrl( new URI(MsrConstants.ExchangeASMX) );
 		} catch (URISyntaxException e1) {
 			e1.printStackTrace();
 		}
@@ -291,7 +291,7 @@ public class EmailUtil {
 			FileUtil fileUtil = new FileUtil();
 			String[] emailList = null;
 			try {
-				emailList = fileUtil.getEmailList("\\\\srv-file-01.capmkts.local\\ServicingAcquisition\\ServicingAcquisition\\FNMACoIssue\\EmailList\\EmailFailedList.txt");
+				emailList = fileUtil.getEmailList(MsrConstants.EmailFailedList);
 			} catch (IOException e2) {
 				e2.printStackTrace();
 			}
@@ -300,7 +300,7 @@ public class EmailUtil {
 	        ExchangeCredentials credentials = new WebCredentials(MsrConstants.FROM_EMAIL, MsrConstants.EMAIL_PASS);
 	        service.setCredentials( credentials );    
 	        try {
-				service.setUrl( new URI("https://srv-mail-01.capmkts.local/ews/exchange.asmx") );
+				service.setUrl( new URI(MsrConstants.ExchangeASMX) );
 			} catch (URISyntaxException e1) {
 				e1.printStackTrace();
 			}

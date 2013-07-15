@@ -143,6 +143,16 @@ public class CheckDB {
 	    			    				    	   }
     			    				    	   }
     			    				       }
+    			    				       
+//    			    				       //If borrower credit score = 0, set to null
+//    			    				       if (i == 11 || i == 18 || i == 25 || i == 32 || i == 39){
+//    			    				    	   if (listArray[i] != null){
+//    			    				    		   if (listArray[i].equals("0")){
+//    			    				    			   listArray[i] = "";
+//    			    				    		   }
+//    			    				    	   }
+//    			    				       }
+//    			    				       
     			    				       String temp = "";
     			    				       System.out.println(listArray[i]);
     			    				       if (listArray[i] != null){

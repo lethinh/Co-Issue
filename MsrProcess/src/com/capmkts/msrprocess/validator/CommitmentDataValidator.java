@@ -2,15 +2,12 @@ package com.capmkts.msrprocess.validator;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Map;
 
 import com.capmkts.msrprocess.constants.MsrConstants;
 import com.capmkts.msrprocess.dao.CommimentDataInElgStateDAO;
 import com.capmkts.msrprocess.dao.CommitmentDataDAO;
 import com.capmkts.msrprocess.dao.CommitmentLetterDAO;
-import com.capmkts.msrprocess.dao.PatronCompanyDAO;
 import com.capmkts.msrprocess.data.CommitmentData;
-import com.capmkts.msrprocess.data.PatronCompany;
 
 public class CommitmentDataValidator {
 
@@ -53,7 +50,7 @@ public class CommitmentDataValidator {
 
 			if (!isValidAgencyCommitNumber || !isValidState) {
 
-				dataValidator.addMessage("### Loan "+ commitmentData.getLoanNumber() + " is Invalid --"+ message.toString());
+				dataValidator.addMessage("\nLoan "+ commitmentData.getLoanNumber() + " is Invalid --"+ message.toString());
 
 				StringBuffer invalidMessage = new StringBuffer();
 

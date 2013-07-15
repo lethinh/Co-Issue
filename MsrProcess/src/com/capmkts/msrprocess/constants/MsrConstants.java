@@ -24,6 +24,23 @@ public interface MsrConstants {
 	public static final String	SCHEDULED_ACTUAL = "ScheduledInterestActualPrincipal";
 	public static final String	SCHEDULED_SCHEDULED = "ScheduledInterestScheduledPrincipal";
 	
+	//Exchange ASMX
+	public static final String ExchangeASMX = "https://srv-mail-01.capmkts.local/ews/exchange.asmx";
+	
+	//Email List - Testing
+	public static final String DFIEmailList = "C:\\FNMACoIssue\\EmailList\\DFIEmailList.txt";
+	public static final String EmailCMCCommitLetterList = "C:\\FNMACoIssue\\EmailList\\EmailCMCCommitLetterList.txt";
+	public static final String EmailFailedList = "C:\\FNMACoIssue\\EmailList\\EmailFailedList.txt";
+	public static final String NotificationList = "C:\\FNMACoIssue\\EmailList\\NotificationList.txt";
+	public static final String EmailList = "C:\\FNMACoIssue\\EmailList\\EmailList.txt";
+	
+	//Email List - Production
+//	public static final String DFIEmailList = "\\\\srv-file-01.capmkts.local\\ServicingAcquisition\\ServicingAcquisition\\FNMACoIssue\\EmailList\\DFIEmailList.txt";
+//	public static final String EmailCMCCommitLetterList = "\\\\srv-file-01.capmkts.local\\ServicingAcquisition\\ServicingAcquisition\\FNMACoIssue\\EmailList\\EmailCMCCommitLetterList.txt";
+//	public static final String EmailFailedList = "\\\\srv-file-01.capmkts.local\\ServicingAcquisition\\ServicingAcquisition\\FNMACoIssue\\EmailList\\EmailFailedList.txt";
+//	public static final String NotificationList = "\\\\srv-file-01.capmkts.local\\ServicingAcquisition\\ServicingAcquisition\\FNMACoIssue\\EmailList\\NotificationList.txt";
+//	public static final String EmailList = "\\\\srv-file-01.capmkts.local\\ServicingAcquisition\\ServicingAcquisition\\FNMACoIssue\\EmailList\\EmailList.txt";
+	
 	//PDF Email Properties	
 //	public static final String SMTP_HOST_NAME = "SRV-MAIL-01.capmkts.org";
 //	public static final String SMTP_HOST_NAME = "smtp.capmkts.org";
@@ -68,24 +85,35 @@ public interface MsrConstants {
 	//BulkUpload service locator TEST
 //	public static final String SSISERVICESOAP_ADDRESS 	= "http://localhost/BulkImport/Services/SSIService.asmx";
 		
-	//BulkUpload Scheduler -- Directory		
-//	public static final String CSV_DIRECTORY			= "C:\\EncompassUpload\\";
-	public static final String CSV_DIRECTORY			= "\\\\srv-file-01.capmkts.local\\ServicingAcquisition\\ServicingAcquisition\\FNMACoIssue\\EncompassUpload\\";
-	public static final String CSV_LOG_DIRECTORY		= "\\\\srv-file-01.capmkts.local\\ServicingAcquisition\\ServicingAcquisition\\FNMACoIssue\\EncompassUploadLog\\";
+	//BulkUpload Scheduler -- Test Directory		
+	public static final String CSV_DIRECTORY			= "C:\\FNMACoIssue\\EncompassUpload\\";
+	public static final String CSV_LOG_DIRECTORY		= "C:\\FNMACoIssue\\EncompassUploadLog\\";
+
+	//BulkUpload Scheduler -- Production Directory	
+//	public static final String CSV_DIRECTORY			= "\\\\srv-file-01.capmkts.local\\ServicingAcquisition\\ServicingAcquisition\\FNMACoIssue\\EncompassUpload\\";
+//	public static final String CSV_LOG_DIRECTORY		= "\\\\srv-file-01.capmkts.local\\ServicingAcquisition\\ServicingAcquisition\\FNMACoIssue\\EncompassUploadLog\\";
 	public static final int  CAV_BULKUPLOAD_INTERVAL     		= 1;	//in minutes
 	
-	//Network Directories
-	public static final String UPLOADED_LOAN_DOCS = "\\\\srv-file-01.capmkts.local\\ServicingAcquisition\\ServicingAcquisition\\FNMACoIssue\\UploadedLoanDocs\\";
-	public static final String SOFT_ERRORS = "\\\\srv-file-01.capmkts.local\\ServicingAcquisition\\ServicingAcquisition\\FNMACoIssue\\SoftErrorsDataFiles\\";
-	public static final String CMC_COMMIT_LETTERS = "\\\\srv-file-01.capmkts.local\\ServicingAcquisition\\ServicingAcquisition\\FNMACoIssue\\CMCCommitmentLettersAutoGen\\";
-//	public static final String CMC_COMMIT_LETTERS = "C:\\";
+	//Test Network Directories
+	public static final String UPLOADED_LOAN_DOCS = "C:\\FNMACoIssue\\UploadedLoanDocs\\";
+	public static final String SOFT_ERRORS = "C:\\FNMACoIssue\\SoftErrorsDataFiles\\";
+	public static final String CMC_COMMIT_LETTERS = "C:\\FNMACoIssue\\CMCCommitmentLettersAutoGen\\";
+	
+	//Prod Network Directories
+//	public static final String UPLOADED_LOAN_DOCS = "\\\\srv-file-01.capmkts.local\\ServicingAcquisition\\ServicingAcquisition\\FNMACoIssue\\UploadedLoanDocs\\";
+//	public static final String SOFT_ERRORS = "\\\\srv-file-01.capmkts.local\\ServicingAcquisition\\ServicingAcquisition\\FNMACoIssue\\SoftErrorsDataFiles\\";
+//	public static final String CMC_COMMIT_LETTERS = "\\\\srv-file-01.capmkts.local\\ServicingAcquisition\\ServicingAcquisition\\FNMACoIssue\\CMCCommitmentLettersAutoGen\\";
 	public static final String LOCALBINFOLDER = "C:\\apache-tomcat-7.0.34\\bin";
 	
 	//Additional Extension Request Contact Info
 	public static final String AdditionalExtReqBlurb = "To Request an additional extension, please contact tradesupport@cmcfunding.com or please call our trade manager at 904-543-0052. ";
 	public static final String AdditionalExtReqContact = "tradesupport@cmcfunding.com";
 	
-	//Dynamic Field Importer (DFI)  file
-	public static final String DFIUploadTemplate = "\\\\srv-file-01.capmkts.local\\ServicingAcquisition\\ServicingAcquisition\\FNMACoIssue\\DFI\\DFITemplate.csv";
-	public static final String DFIUploadFile = "\\\\srv-file-01.capmkts.local\\ServicingAcquisition\\ServicingAcquisition\\FNMACoIssue\\DFI\\DFIUpload.csv";
+	//Testing - Dynamic Field Importer (DFI)  file 
+	public static final String DFIUploadTemplate = "C:\\DFI\\DFITemplate.csv";
+	public static final String DFIUploadFile = "C:\\FNMACoIssue\\DFI\\DFIUpload.csv";
+	
+	//Production - Dynamic Field Importer (DFI)  file
+//	public static final String DFIUploadTemplate = "\\\\srv-file-01.capmkts.local\\ServicingAcquisition\\ServicingAcquisition\\FNMACoIssue\\DFI\\DFITemplate.csv";
+//	public static final String DFIUploadFile = "\\\\srv-file-01.capmkts.local\\ServicingAcquisition\\ServicingAcquisition\\FNMACoIssue\\DFI\\DFIUpload.csv";
 }

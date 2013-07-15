@@ -8,21 +8,18 @@ import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Iterator;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
-import com.capmkts.msrprocess.data.CommitmentData;
 
 /**
  * Using Apache POI API read Microsoft Excel (.xls) file and convert into CSV
@@ -109,8 +106,61 @@ public class DataConversionUtil {
 		}
 		writeCSV(csvFileName, csvData);
 	}
-
+	
 	public static String getExcelToCSVString(File file) throws Exception {
+		// checkValidFile(csvFileName);
+		String csvData = "";
+		if (file.getName().endsWith("xls")) {
+			HSSFWorkbook myWorkBook = new HSSFWorkbook(new POIFSFileSystem(
+					new FileInputStream(file)));
+			HSSFSheet mySheet = myWorkBook.getSheetAt(0);
+			Iterator rowIter = mySheet.rowIterator();
+			
+			while (rowIter.hasNext()) {
+				HSSFRow myRow = (HSSFRow) rowIter.next();
+				for (int i = 0; i < myRow.getLastCellNum(); i++) {
+					csvData += getCellData(myRow.getCell(i));
+				}
+				csvData += NEW_LINE_CHARACTER;
+			}
+		} else if (file.getName().endsWith("xlsx")) {
+			boolean skipRow;
+			XSSFWorkbook workbook = new XSSFWorkbook(new FileInputStream(file));
+			XSSFSheet sheet = workbook.getSheetAt(0);
+			
+			Row row = null;
+	        for (int i = 0; i <= sheet.getLastRowNum(); i++) {
+	        	skipRow = false;
+	            row = sheet.getRow(i);
+	            for (int j = 0; j < row.getLastCellNum(); j++) {
+	            	if (j==0){
+	            		if ((row.getCell(j)+",").equalsIgnoreCase("null,")){
+	            			skipRow = true;
+	            			break;
+	            		}
+	            	}
+	                
+	            	String tempCell = (row.getCell(j)+"").replaceAll("\n", "");
+//	            	System.out.println(tempCell);
+	            	int count = StringUtils.countMatches(tempCell, ",");
+	            	if (count > 0){
+	            		tempCell = "\""+tempCell+"\"";
+	            	}
+	                csvData += tempCell+",";
+	            }
+	            if (skipRow == true){
+	            	break;
+	            }
+	            else{
+	            	csvData += NEW_LINE_CHARACTER;
+	            }
+	        }
+		}
+//		System.out.println("" + csvData);
+		return csvData;
+	}
+
+	public static String getExcelToCSVStringCommitRequest(File file) throws Exception {
 		// checkValidFile(csvFileName);
 		String csvData = "";
 		if (file.getName().endsWith("xls")) {
@@ -133,9 +183,99 @@ public class DataConversionUtil {
 			Row row = null;
 	        for (int i = 0; i <= sheet.getLastRowNum(); i++) {
 	            row = sheet.getRow(i);
-	            for (int j = 0; j < row.getLastCellNum(); j++) {
-	                //System.out.print("\"" + row.getCell(j) + "\";");
-	                csvData += row.getCell(j);
+	            if (i == 0){
+	            	 for (int j = 0; j < row.getLastCellNum(); j++) {
+	            		 if (j <row.getLastCellNum() - 1){
+		            		 String tempValue = row.getCell(j)+"";
+		            		 csvData += tempValue.replaceAll("\\s", "") + ",";
+	            		 }
+	            		 else {
+	            			 String tempValue = row.getCell(j)+"";
+		            		 csvData += tempValue.replaceAll("\\s", "");
+	            		 }
+	            	 }
+	            }
+	            else {
+		            for (int j = 0; j < row.getLastCellNum(); j++) {
+		                //System.out.print("\"" + row.getCell(j) + "\";");
+		            	switch(j){
+		            		case 0:
+		            			String origID = row.getCell(j)+"";
+		            			csvData += origID.replaceAll(".0", "") + ",";
+		            			break;
+			            	case 1:
+			            		String tempValue = ""+row.getCell(j);
+			            		if (tempValue.contains("E")){
+			            			BigDecimal bd = new BigDecimal(tempValue);
+			            			csvData += bd.toPlainString() + ",";
+			            		}
+			            		break;
+			            	case 2:
+			            		String agencyCommitID = row.getCell(j)+"";
+		            			csvData += agencyCommitID.replaceAll(".0", "") + ",";
+		            			break;
+			            	case 3:
+			            		String product = row.getCell(j) + "";
+			            		csvData += product.replaceAll("\\s", "") + ",";
+			            		break;
+			            	case 4:
+			            		csvData += row.getCell(j) + ",";
+			            		break;
+			            	case 5:
+			            		csvData += row.getCell(j) + ",";
+			            		break;
+			            	case 6:
+			            		csvData += row.getCell(j) + ",";
+			            		break;
+			            	case 7:
+			            		csvData += row.getCell(j) + ",";
+			            		break;
+			            	case 8:
+			            		csvData += row.getCell(j) + ",";
+			            		break;
+			            	case 9:
+			            		String FICO = row.getCell(j)+"";
+		            			csvData += FICO.replaceAll(".0", "") + ",";
+		            			break;
+			            	case 10:
+			            		csvData += row.getCell(j) + ",";
+			            		break;
+			            	case 11:
+			            		csvData += row.getCell(j) + ",";
+			            		break;
+			            	case 12:
+			            		csvData += row.getCell(j) + ",";
+			            		break;
+			            	case 13:
+			            		csvData += row.getCell(j) + ",";
+			            		break;
+			            	case 14:
+			            		String waiveEscrowsFlag = row.getCell(j)+"";
+			            		if (waiveEscrowsFlag.equalsIgnoreCase("yes") || waiveEscrowsFlag.equalsIgnoreCase("1")){
+			            			waiveEscrowsFlag = "TRUE";
+			            		}
+			            		if (waiveEscrowsFlag.equalsIgnoreCase("no") || waiveEscrowsFlag.equalsIgnoreCase("0")){
+			            			waiveEscrowsFlag = "FALSE";
+			            		}
+			            		csvData += waiveEscrowsFlag + ",";
+			            		break;
+			            	case 15:
+			            		csvData += row.getCell(j) + ",";
+			            		break;
+			            	case 16:
+			            		String actualCloseDate = row.getCell(j)+"";
+			            		if (actualCloseDate.contains("-")){
+			            			csvData += DateUtil.formatXLSXDate(actualCloseDate);
+			            		}
+			            		else {
+			            			csvData += actualCloseDate;
+			            		}
+			            		break;
+			            	case 17:
+			            		csvData += row.getCell(j) + ",";
+			            		break;
+		            	}
+		            }
 	            }
 	            csvData += NEW_LINE_CHARACTER;
 	        }
@@ -144,6 +284,131 @@ public class DataConversionUtil {
 		return csvData;
 	}
 
+	//TO-DO: Convert XLSX servicing data
+	public static String getExcelToCSVStringServicingData(File file) throws Exception {
+		// checkValidFile(csvFileName);
+		String csvData = "";
+		if (file.getName().endsWith("xls")) {
+			HSSFWorkbook myWorkBook = new HSSFWorkbook(new POIFSFileSystem(
+					new FileInputStream(file)));
+			HSSFSheet mySheet = myWorkBook.getSheetAt(0);
+			Iterator rowIter = mySheet.rowIterator();
+			
+			while (rowIter.hasNext()) {
+				HSSFRow myRow = (HSSFRow) rowIter.next();
+				for (int i = 0; i < myRow.getLastCellNum(); i++) {
+					csvData += getCellData(myRow.getCell(i));
+				}
+				csvData += NEW_LINE_CHARACTER;
+			}
+		} else if (file.getName().endsWith("xlsx")) {
+			XSSFWorkbook workbook = new XSSFWorkbook(new FileInputStream(file));
+			XSSFSheet sheet = workbook.getSheetAt(0);
+			
+			Row row = null;
+	        for (int i = 0; i <= sheet.getLastRowNum(); i++) {
+	            row = sheet.getRow(i);
+	            if (i == 0){
+	            	 for (int j = 0; j < row.getLastCellNum(); j++) {
+	            		 if (j <row.getLastCellNum() - 1){
+		            		 String tempValue = row.getCell(j)+"";
+		            		 csvData += tempValue.replaceAll("\\s", "") + ",";
+	            		 }
+	            		 else {
+	            			 String tempValue = row.getCell(j)+"";
+		            		 csvData += tempValue.replaceAll("\\s", "");
+	            		 }
+	            	 }
+	            }
+	            else {
+		            for (int j = 0; j < row.getLastCellNum(); j++) {
+		                //System.out.print("\"" + row.getCell(j) + "\";");
+		            	switch(j){
+		            		case 0:
+		            			String origID = row.getCell(j)+"";
+		            			csvData += origID.replaceAll(".0", "") + ",";
+		            			break;
+			            	case 1:
+			            		String tempValue = ""+row.getCell(j);
+			            		if (tempValue.contains("E")){
+			            			BigDecimal bd = new BigDecimal(tempValue);
+			            			csvData += bd.toPlainString() + ",";
+			            		}
+			            		break;
+			            	case 2:
+			            		String agencyCommitID = row.getCell(j)+"";
+		            			csvData += agencyCommitID.replaceAll(".0", "") + ",";
+		            			break;
+			            	case 3:
+			            		String product = row.getCell(j) + "";
+			            		csvData += product.replaceAll("\\s", "") + ",";
+			            		break;
+			            	case 4:
+			            		csvData += row.getCell(j) + ",";
+			            		break;
+			            	case 5:
+			            		csvData += row.getCell(j) + ",";
+			            		break;
+			            	case 6:
+			            		csvData += row.getCell(j) + ",";
+			            		break;
+			            	case 7:
+			            		csvData += row.getCell(j) + ",";
+			            		break;
+			            	case 8:
+			            		csvData += row.getCell(j) + ",";
+			            		break;
+			            	case 9:
+			            		String FICO = row.getCell(j)+"";
+		            			csvData += FICO.replaceAll(".0", "") + ",";
+		            			break;
+			            	case 10:
+			            		csvData += row.getCell(j) + ",";
+			            		break;
+			            	case 11:
+			            		csvData += row.getCell(j) + ",";
+			            		break;
+			            	case 12:
+			            		csvData += row.getCell(j) + ",";
+			            		break;
+			            	case 13:
+			            		csvData += row.getCell(j) + ",";
+			            		break;
+			            	case 14:
+			            		String waiveEscrowsFlag = row.getCell(j)+"";
+			            		if (waiveEscrowsFlag.equalsIgnoreCase("yes") || waiveEscrowsFlag.equalsIgnoreCase("1")){
+			            			waiveEscrowsFlag = "TRUE";
+			            		}
+			            		if (waiveEscrowsFlag.equalsIgnoreCase("no") || waiveEscrowsFlag.equalsIgnoreCase("0")){
+			            			waiveEscrowsFlag = "FALSE";
+			            		}
+			            		csvData += waiveEscrowsFlag + ",";
+			            		break;
+			            	case 15:
+			            		csvData += row.getCell(j) + ",";
+			            		break;
+			            	case 16:
+			            		String actualCloseDate = row.getCell(j)+"";
+			            		if (actualCloseDate.contains("-")){
+			            			csvData += DateUtil.formatXLSXDate(actualCloseDate);
+			            		}
+			            		else {
+			            			csvData += actualCloseDate;
+			            		}
+			            		break;
+			            	case 17:
+			            		csvData += row.getCell(j) + ",";
+			            		break;
+		            	}
+		            }
+	            }
+	            csvData += NEW_LINE_CHARACTER;
+	        }
+		}
+		System.out.print("" + csvData);
+		return csvData;
+	}
+	
 	/**
 	 * Write the string into a text file
 	 * 
@@ -255,10 +520,11 @@ public class DataConversionUtil {
 	}
 
 	public static void main(String[] args) throws Exception {
-		String excelfileName1 = "C:\\test\\FNMA377367.xls";
+		String excelfileName1 = "C:\\746\\FNMA458973.xls";
 		String csvFileName1 = "C:\\test\\FNMA377367.csv";
-		//File file = new File("C:\\test\\FNMA377367.xls");
-		File file = new File("C:\\Caps\\Docs\\ServicingFile1.xls");
+		File file = new File("C:\\FNMA301112.xlsx");
+//		File file = new File("C:\\746\\CMC+SERV+SET+737.xlsx");
+//		File file = new File("C:\\746\\CMC Servicing 7112013.xls");
 		
 		String test = getExcelToCSVString(file);
 		System.out.println(test);

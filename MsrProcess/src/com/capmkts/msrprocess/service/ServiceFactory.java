@@ -15,6 +15,7 @@ import com.capmkts.msrprocess.constants.MsrConstants;
 import com.capmkts.msrprocess.dao.CMCFileDAO;
 import com.capmkts.msrprocess.dao.CommitmentDataDAO;
 import com.capmkts.msrprocess.dao.CreditDataDAO;
+import com.capmkts.msrprocess.util.DataConversionUtil;
 import com.capmkts.msrprocess.validator.DataValidator;
 
 public class ServiceFactory {
@@ -41,37 +42,51 @@ public class ServiceFactory {
 		
 		if (requestType.equalsIgnoreCase(MsrConstants.AGENCY_COMMITMENT_LETTER)) {
 			// Agency COMMITMENT LETTER
-			if (fileName.endsWith(".csv") || fileName.endsWith(".xls")
-					|| fileName.endsWith(".xlsx")) { 
-				CommitmentLetterCSVFileService commitmentLetterCSVFileService = new CommitmentLetterCSVFileService();
-				commitmentLetterCSVFileService.process(file, dataValidator);}
-			/*else if (fileName.endsWith(".xlsx")){
-				dataValidator.addMessage("XLSX files are not currently supported. Please upload an XLS file.");
-			}*/
-			else{
-				dataValidator.addMessage("Invalid Agency Commitment Letter File Extension!");
+			if (fileName.contains(" FHLMC") || fileName.contains(" FNMA")){
+				dataValidator.addMessage("Please upload a valid Agency Commitment Letter. You're trying to upload a commitment reqest.");
+			} 
+			else { 
+				if (fileName.endsWith(".csv") || fileName.endsWith(".xls")
+						|| fileName.endsWith(".xlsx")) { 
+					CommitmentLetterCSVFileService commitmentLetterCSVFileService = new CommitmentLetterCSVFileService();
+					commitmentLetterCSVFileService.process(file, dataValidator);}
+				/*else if (fileName.endsWith(".xlsx")){
+					dataValidator.addMessage("XLSX files are not currently supported. Please upload an XLS file.");
+				}*/
+				else {
+					dataValidator.addMessage("Invalid Agency Commitment Letter File Extension!");
+				}
 			}
 		} else if (requestType.equalsIgnoreCase(MsrConstants.COMMIT_REQUEST)){
 			// COMMITMENT REQUEST 
-			if (fileName.endsWith(".xls") || fileName.endsWith(".xlsx")) {
-				CommitmentDataXLSFileService commitmentDataXLSFileService = new CommitmentDataXLSFileService();
-				commitmentDataXLSFileService.process(file,dataValidator);
-			}
-			/*else if (fileName.endsWith(".xlsx")){
-				dataValidator.addMessage("XLSX files are not currently supported. Please upload an XLS file.");
-			}*/
-			else{
-				dataValidator.addMessage("Invalid Agency Commitment Reuqest File(s)!");
-			}
+				if (fileName.endsWith(".xls") || fileName.endsWith(".xlsx")) {
+					CommitmentDataXLSFileService commitmentDataXLSFileService = new CommitmentDataXLSFileService();
+					commitmentDataXLSFileService.process(file,dataValidator);
+				}
+				/*else if (fileName.endsWith(".xlsx")){
+					dataValidator.addMessage("XLSX files are not currently supported. Please upload an XLS file.");
+				}*/
+				else{
+					dataValidator.addMessage("Invalid Agency Commitment Reuqest File(s)!");
+				}
 		// SERVICING DATA
 		} else if (requestType.equalsIgnoreCase(MsrConstants.SERVICING_DATA)) { 
 			// .csv
-				String agencyType;
-				if (fileName.endsWith(".csv")) { 
-					agencyType = checkAgencyFile(file);
+				String agencyType = "FNMA";
+				if (fileName.endsWith(".csv") || fileName.endsWith(".xls") || fileName.endsWith(".xlsx")) { 
+					if (fileName.endsWith(".xls") || fileName.endsWith(".xlsx")){
+						String fileContent = DataConversionUtil.getExcelToCSVString(file);
+						agencyType = checkAgencyFile(fileContent);
+					}
+					else{
+						agencyType = checkAgencyFile(file);
+					}
 					if (agencyType.equals("FHLMCPA")){
 						FHLMCPACSVFileService fhlmcPACSVFileService = new FHLMCPACSVFileService();
 						fhlmcPACSVFileService.process(file, dataValidator);
+					}
+					else if (agencyType.equals("SET")){
+						dataValidator.addMessage("SET loans are current not supported! Please contact CMC Support.");
 					}
 					else{
 						ServicingDataCSVFileService servicingDataCSVFileService = new ServicingDataCSVFileService();
@@ -82,7 +97,7 @@ public class ServiceFactory {
 					servicingDataDATFileService.process(file, dataValidator);
 				}
 				else{
-					dataValidator.addMessage("Invalid file type. Your request cannot be completed!");
+					dataValidator.addMessage("Your request cannot be completed. Invalid file type.  Please contact CMC Support.");
 				}
 				
 				if (dataValidator.getMessageList().size() > 7){
@@ -90,7 +105,8 @@ public class ServiceFactory {
 					dataValidator.setMessageList(null);
 					dataValidator.addMessage(errors + " errors occurred. Please check log file for details");
 				}
-		} else if (requestType.equalsIgnoreCase(MsrConstants.LOAN_DOCUMENT_FILE)) { // LOAN DOCS PDF
+		//LOAN DOCS PDF and TIFF
+		} else if (requestType.equalsIgnoreCase(MsrConstants.LOAN_DOCUMENT_FILE)) { 
 			if (fileName.endsWith(".pdf") || fileName.endsWith(".tiff")) { 
 				String sellerLoanNumber = "";
 				String tempLoanNumber = "";
@@ -162,7 +178,7 @@ public class ServiceFactory {
 					dataValidator.addMessage("Your file(s) has been uploaded successfully.");
 				}
 				else{
-					dataValidator.addMessage("Upload failed. No reference for loan docs found.");
+					dataValidator.addMessage("Upload failed. No reference for loan docs found. Filename must be seller loan number.");
 				}
 			} 
 			else{
@@ -187,9 +203,39 @@ public class ServiceFactory {
 		// Read header
 		String[] headerArray = recordArray[0].split("\\,");
 		
+		//FANNIE LOANS
 		if (headerArray[0].contains("Accrued")){
 			agencyType = "FHLMCPA";
 		}
+		//SET LOANS
+		else if (headerArray[0].contains("Due Date")){
+			agencyType = "SET";
+		}
+		//FREDDIE LOANS
+		else{
+			agencyType = "FNMA";
+		}
+		return agencyType;
+	}
+	
+	public static String checkAgencyFile(String fileContent1) throws IOException{
+		String agencyType;
+
+		// Split string into records
+		String[] recordArray = fileContent1.split("\\n");
+
+		// Read header
+		String[] headerArray = recordArray[0].split("\\,");
+		
+		//FANNIE LOANS
+		if (headerArray[0].contains("Accrued")){
+			agencyType = "FHLMCPA";
+		}
+		//SET LOANS
+		else if (headerArray[0].contains("Due Date")){
+			agencyType = "SET";
+		}
+		//FREDDIE LOANS
 		else{
 			agencyType = "FNMA";
 		}
